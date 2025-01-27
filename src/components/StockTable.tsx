@@ -9,6 +9,17 @@ import {
 import { Signal } from "./Signal";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
+interface RSIData {
+  Value: number;
+  Condition: string;
+}
+
+interface StochasticData {
+  K_Value: number;
+  D_Value: number;
+  Condition: string;
+}
+
 interface StockData {
   Symbol: string;
   "Last EMA Signal": string;
@@ -16,6 +27,8 @@ interface StockData {
   "MACD Crossover": string;
   "Volume Divergence": string;
   "ADX Strength": string;
+  RSI: RSIData;
+  Stochastic: StochasticData;
 }
 
 interface StockTableProps {
@@ -55,6 +68,8 @@ export const StockTable = ({ data }: StockTableProps) => {
             <TableHead>MACD Crossover</TableHead>
             <TableHead>Volume Divergence</TableHead>
             <TableHead>ADX Strength</TableHead>
+            <TableHead>RSI</TableHead>
+            <TableHead>Stochastic</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -89,6 +104,20 @@ export const StockTable = ({ data }: StockTableProps) => {
               </TableCell>
               <TableCell>
                 <Signal signal={stock["ADX Strength"]} />
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">{stock.RSI.Value.toFixed(2)}</span>
+                  <Signal signal={stock.RSI.Condition} />
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">
+                    K: {stock.Stochastic.K_Value.toFixed(2)} D: {stock.Stochastic.D_Value.toFixed(2)}
+                  </span>
+                  <Signal signal={stock.Stochastic.Condition} />
+                </div>
               </TableCell>
             </TableRow>
           ))}

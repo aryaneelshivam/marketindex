@@ -1,5 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 
+interface RSIData {
+  Value: number;
+  Condition: string;
+}
+
+interface StochasticData {
+  K_Value: number;
+  D_Value: number;
+  Condition: string;
+}
+
 interface StockData {
   Symbol: string;
   "Last EMA Signal": string;
@@ -7,6 +18,8 @@ interface StockData {
   "MACD Crossover": string;
   "Volume Divergence": string;
   "ADX Strength": string;
+  RSI: RSIData;
+  Stochastic: StochasticData;
 }
 
 const fetchStockData = async (period: string): Promise<StockData[]> => {
