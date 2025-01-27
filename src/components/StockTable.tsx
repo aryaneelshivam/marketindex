@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Signal } from "./Signal";
+import { TrendingDown, TrendingUp } from "lucide-react";
 
 interface StockData {
   Symbol: string;
@@ -30,6 +31,16 @@ export const StockTable = ({ data }: StockTableProps) => {
       return "bg-red-50";
     }
     return "";
+  };
+
+  const getTrendIcon = (emaSignal: string, smaSignal: string) => {
+    if (emaSignal === "BUY" && smaSignal === "BUY") {
+      return <TrendingUp className="w-4 h-4 text-signal-buy ml-2" />;
+    }
+    if (emaSignal === "SELL" && smaSignal === "SELL") {
+      return <TrendingDown className="w-4 h-4 text-signal-sell ml-2" />;
+    }
+    return null;
   };
 
   return (
@@ -58,7 +69,10 @@ export const StockTable = ({ data }: StockTableProps) => {
               <TableCell className="font-medium text-muted-foreground">
                 {index + 1}
               </TableCell>
-              <TableCell className="font-medium">{stock.Symbol}</TableCell>
+              <TableCell className="font-medium flex items-center">
+                {stock.Symbol}
+                {getTrendIcon(stock["Last EMA Signal"], stock["Last SMA Signal"])}
+              </TableCell>
               <TableCell>
                 <Signal signal={stock["Last EMA Signal"]} />
               </TableCell>
