@@ -57,16 +57,21 @@ export const StockTable = ({ data }: StockTableProps) => {
   };
 
   const getRSIColor = (value: number) => {
-    if (value >= 70) return "text-signal-sell";
-    if (value <= 30) return "text-signal-buy";
+    if (value >= 70) return "text-signal-sell font-semibold";
+    if (value <= 30) return "text-signal-buy font-semibold";
     return "text-muted-foreground";
   };
 
   const getStochColor = (kValue: number, dValue: number) => {
     const avgValue = (kValue + dValue) / 2;
-    if (avgValue >= 80) return "text-signal-sell";
-    if (avgValue <= 20) return "text-signal-buy";
+    if (avgValue >= 80) return "text-signal-sell font-semibold";
+    if (avgValue <= 20) return "text-signal-buy font-semibold";
     return "text-muted-foreground";
+  };
+
+  const getNeutralPillColor = (signal: string) => {
+    if (signal === "NEUTRAL") return "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100";
+    return "";
   };
 
   return (
@@ -110,20 +115,30 @@ export const StockTable = ({ data }: StockTableProps) => {
               <TableCell>
                 <Signal
                   signal={stock["MACD Crossover"] === "YES" ? "BUY" : "NEUTRAL"}
+                  className={getNeutralPillColor(stock["MACD Crossover"] === "YES" ? "BUY" : "NEUTRAL")}
                 />
               </TableCell>
               <TableCell>
-                <Signal signal={stock["Volume Divergence"]} />
+                <Signal 
+                  signal={stock["Volume Divergence"]} 
+                  className={getNeutralPillColor(stock["Volume Divergence"])}
+                />
               </TableCell>
               <TableCell>
-                <Signal signal={stock["ADX Strength"]} />
+                <Signal 
+                  signal={stock["ADX Strength"]} 
+                  className={getNeutralPillColor(stock["ADX Strength"])}
+                />
               </TableCell>
               <TableCell>
                 <div className="flex flex-col gap-1">
                   <span className={`text-sm font-medium ${getRSIColor(stock.RSI.Value)}`}>
                     {stock.RSI.Value.toFixed(2)}
                   </span>
-                  <Signal signal={stock.RSI.Condition} className="w-fit" />
+                  <Signal 
+                    signal={stock.RSI.Condition} 
+                    className={`w-fit ${getNeutralPillColor(stock.RSI.Condition)}`}
+                  />
                 </div>
               </TableCell>
               <TableCell>
@@ -135,7 +150,10 @@ export const StockTable = ({ data }: StockTableProps) => {
                     <div>K: {stock.Stochastic.K_Value.toFixed(2)}</div>
                     <div>D: {stock.Stochastic.D_Value.toFixed(2)}</div>
                   </div>
-                  <Signal signal={stock.Stochastic.Condition} className="w-fit" />
+                  <Signal 
+                    signal={stock.Stochastic.Condition} 
+                    className={`w-fit ${getNeutralPillColor(stock.Stochastic.Condition)}`}
+                  />
                 </div>
               </TableCell>
             </TableRow>

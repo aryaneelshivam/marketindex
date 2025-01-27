@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { Navbar } from "@/components/Navbar";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -37,14 +38,16 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="mx-auto max-w-[1400px] space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Market Analysis</h1>
-          <p className="text-muted-foreground">
-            Technical analysis indicators for NSE stocks
-          </p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="p-4 md:p-8">
+        <div className="mx-auto max-w-[1400px] space-y-6">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">Market Analysis</h1>
+            <p className="text-muted-foreground">
+              Technical analysis indicators for NSE stocks
+            </p>
+          </div>
 
         <div className="space-y-6">
           <div className="rounded-lg border bg-card p-4">
@@ -198,6 +201,7 @@ const Index = () => {
         ) : filteredData ? (
           <StockTable data={filteredData} />
         ) : null}
+        </div>
       </div>
     </div>
   );
