@@ -38,10 +38,10 @@ interface StockTableProps {
 export const StockTable = ({ data }: StockTableProps) => {
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
     if (emaSignal === "BUY" && smaSignal === "BUY") {
-      return "bg-[#F2FCE2]";
+      return "bg-[#F2FCE2] dark:bg-green-950/30";
     }
     if (emaSignal === "SELL" && smaSignal === "SELL") {
-      return "bg-red-50";
+      return "bg-red-50 dark:bg-red-950/30";
     }
     return "";
   };
@@ -56,20 +56,33 @@ export const StockTable = ({ data }: StockTableProps) => {
     return null;
   };
 
+  const getRSIColor = (value: number) => {
+    if (value >= 70) return "text-signal-sell";
+    if (value <= 30) return "text-signal-buy";
+    return "text-muted-foreground";
+  };
+
+  const getStochColor = (kValue: number, dValue: number) => {
+    const avgValue = (kValue + dValue) / 2;
+    if (avgValue >= 80) return "text-signal-sell";
+    if (avgValue <= 20) return "text-signal-buy";
+    return "text-muted-foreground";
+  };
+
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50">
-            <TableHead className="w-[80px]">#</TableHead>
-            <TableHead className="w-[120px]">Symbol</TableHead>
-            <TableHead>EMA Signal</TableHead>
-            <TableHead>SMA Signal</TableHead>
-            <TableHead>MACD Crossover</TableHead>
-            <TableHead>Volume Divergence</TableHead>
-            <TableHead>ADX Strength</TableHead>
-            <TableHead>RSI</TableHead>
-            <TableHead>Stochastic</TableHead>
+            <TableHead className="w-[80px] font-semibold">#</TableHead>
+            <TableHead className="w-[120px] font-semibold">Symbol</TableHead>
+            <TableHead className="font-semibold">EMA Signal</TableHead>
+            <TableHead className="font-semibold">SMA Signal</TableHead>
+            <TableHead className="font-semibold">MACD Crossover</TableHead>
+            <TableHead className="font-semibold">Volume Divergence</TableHead>
+            <TableHead className="font-semibold">ADX Strength</TableHead>
+            <TableHead className="font-semibold">RSI</TableHead>
+            <TableHead className="font-semibold">Stochastic</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -106,17 +119,23 @@ export const StockTable = ({ data }: StockTableProps) => {
                 <Signal signal={stock["ADX Strength"]} />
               </TableCell>
               <TableCell>
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">{stock.RSI.Value.toFixed(2)}</span>
-                  <Signal signal={stock.RSI.Condition} />
+                <div className="flex flex-col gap-1">
+                  <span className={`text-sm font-medium ${getRSIColor(stock.RSI.Value)}`}>
+                    {stock.RSI.Value.toFixed(2)}
+                  </span>
+                  <Signal signal={stock.RSI.Condition} className="w-fit" />
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">
-                    K: {stock.Stochastic.K_Value.toFixed(2)} D: {stock.Stochastic.D_Value.toFixed(2)}
-                  </span>
-                  <Signal signal={stock.Stochastic.Condition} />
+                <div className="flex flex-col gap-1">
+                  <div className={`text-sm font-medium ${getStochColor(
+                    stock.Stochastic.K_Value,
+                    stock.Stochastic.D_Value
+                  )}`}>
+                    <div>K: {stock.Stochastic.K_Value.toFixed(2)}</div>
+                    <div>D: {stock.Stochastic.D_Value.toFixed(2)}</div>
+                  </div>
+                  <Signal signal={stock.Stochastic.Condition} className="w-fit" />
                 </div>
               </TableCell>
             </TableRow>

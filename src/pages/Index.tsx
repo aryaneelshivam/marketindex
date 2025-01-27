@@ -11,6 +11,8 @@ const Index = () => {
   const [emaFilter, setEmaFilter] = useState("ALL");
   const [smaFilter, setSmaFilter] = useState("ALL");
   const [macdFilter, setMacdFilter] = useState("ALL");
+  const [rsiFilter, setRsiFilter] = useState("ALL");
+  const [stochFilter, setStochFilter] = useState("ALL");
   
   const { data: rawData, isLoading, error } = useStockData(period);
   const { toast } = useToast();
@@ -20,8 +22,10 @@ const Index = () => {
     const matchesSma = smaFilter === "ALL" || stock["Last SMA Signal"] === smaFilter;
     const matchesMacd = macdFilter === "ALL" || 
       (macdFilter === "YES" ? stock["MACD Crossover"] === "YES" : stock["MACD Crossover"] === "NO");
+    const matchesRsi = rsiFilter === "ALL" || stock.RSI.Condition === rsiFilter;
+    const matchesStoch = stochFilter === "ALL" || stock.Stochastic.Condition === stochFilter;
     
-    return matchesEma && matchesSma && matchesMacd;
+    return matchesEma && matchesSma && matchesMacd && matchesRsi && matchesStoch;
   });
 
   if (error) {
@@ -33,8 +37,8 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-10">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <div className="min-h-screen bg-background p-4 md:p-8">
+      <div className="mx-auto max-w-[1400px] space-y-6">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Market Analysis</h1>
           <p className="text-muted-foreground">
@@ -69,7 +73,7 @@ const Index = () => {
             </RadioGroup>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
             <div className="rounded-lg border bg-card p-4">
               <p className="mb-3 text-sm font-medium">EMA Signal</p>
               <RadioGroup
@@ -135,6 +139,52 @@ const Index = () => {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="NO" id="macd-no" />
                   <Label htmlFor="macd-no">No</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="rounded-lg border bg-card p-4">
+              <p className="mb-3 text-sm font-medium">RSI Condition</p>
+              <RadioGroup
+                defaultValue="ALL"
+                value={rsiFilter}
+                onValueChange={setRsiFilter}
+                className="flex flex-col gap-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="ALL" id="rsi-all" />
+                  <Label htmlFor="rsi-all">All</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="OVERSOLD" id="rsi-oversold" />
+                  <Label htmlFor="rsi-oversold">Oversold</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="NEUTRAL" id="rsi-neutral" />
+                  <Label htmlFor="rsi-neutral">Neutral</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="rounded-lg border bg-card p-4">
+              <p className="mb-3 text-sm font-medium">Stochastic Condition</p>
+              <RadioGroup
+                defaultValue="ALL"
+                value={stochFilter}
+                onValueChange={setStochFilter}
+                className="flex flex-col gap-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="ALL" id="stoch-all" />
+                  <Label htmlFor="stoch-all">All</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="OVERSOLD" id="stoch-oversold" />
+                  <Label htmlFor="stoch-oversold">Oversold</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="NEUTRAL" id="stoch-neutral" />
+                  <Label htmlFor="stoch-neutral">Neutral</Label>
                 </div>
               </RadioGroup>
             </div>
