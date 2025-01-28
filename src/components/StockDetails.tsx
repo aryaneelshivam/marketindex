@@ -60,7 +60,7 @@ const fetchStockHistory = async (symbol: string, period: string): Promise<PriceD
     throw new Error('Failed to fetch stock history');
   }
   const data = await response.json();
-  return data.map((item: any) => ({
+  return data.data.map((item: any) => ({
     date: new Date(item.date).toLocaleDateString(),
     close: item.close,
   }));
@@ -94,6 +94,7 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
   });
 
   if (isLoading) return <Skeleton className="h-[300px] w-full" />;
+  if (!priceData || priceData.length === 0) return <div>No price data available</div>;
 
   return (
     <div className="space-y-4">
@@ -111,7 +112,7 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
           <AreaChart data={priceData}>
             <XAxis 
               dataKey="date"
-              tickFormatter={(value) => new Date(value).toLocaleDateString()}
+              tickFormatter={(value) => value}
             />
             <YAxis />
             <Tooltip />
