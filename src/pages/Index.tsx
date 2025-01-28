@@ -45,7 +45,7 @@ const Index = () => {
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Market Analysis</h1>
             <p className="text-muted-foreground">
-              Technical analysis indicators for NSE stocks
+              Technical analysis indicator screener for Nifty50 and most active equities 
             </p>
           </div>
 
