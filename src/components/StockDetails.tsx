@@ -4,8 +4,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import {
@@ -14,6 +12,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { 
+  Area, 
+  AreaChart, 
+  ResponsiveContainer, 
+  Tooltip, 
+  XAxis, 
+  YAxis 
+} from "recharts";
+import { useState } from "react";
 
 interface StockDetailsProps {
   symbol: string;
@@ -33,12 +41,29 @@ interface StockProfile {
   earnings_and_forecasts: Record<string, any>;
 }
 
+interface PriceData {
+  date: string;
+  close: number;
+}
+
 const fetchStockProfile = async (symbol: string): Promise<StockProfile> => {
   const response = await fetch(`https://marketatlas.vercel.app/stock/${symbol}`);
   if (!response.ok) {
     throw new Error('Failed to fetch stock profile');
   }
   return response.json();
+};
+
+const fetchStockHistory = async (symbol: string, period: string): Promise<PriceData[]> => {
+  const response = await fetch(`https://marketatlas.vercel.app/stock/${symbol}/history?period=${period}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch stock history');
+  }
+  const data = await response.json();
+  return data.map((item: any) => ({
+    date: new Date(item.date).toLocaleDateString(),
+    close: item.close,
+  }));
 };
 
 const ProfileSection = ({ title, data }: { title: string; data: Record<string, any> }) => (
@@ -59,6 +84,51 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
   </div>
 );
 
+const PriceChart = ({ symbol }: { symbol: string }) => {
+  const [period, setPeriod] = useState<string>("1mo");
+  
+  const { data: priceData, isLoading } = useQuery({
+    queryKey: ['stockHistory', symbol, period],
+    queryFn: () => fetchStockHistory(symbol, period),
+    enabled: !!symbol,
+  });
+
+  if (isLoading) return <Skeleton className="h-[300px] w-full" />;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Price History</h3>
+        <ToggleGroup type="single" value={period} onValueChange={(value) => value && setPeriod(value)}>
+          <ToggleGroupItem value="1mo">1M</ToggleGroupItem>
+          <ToggleGroupItem value="3mo">3M</ToggleGroupItem>
+          <ToggleGroupItem value="6mo">6M</ToggleGroupItem>
+          <ToggleGroupItem value="1y">1Y</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+      <div className="h-[300px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={priceData}>
+            <XAxis 
+              dataKey="date"
+              tickFormatter={(value) => new Date(value).toLocaleDateString()}
+            />
+            <YAxis />
+            <Tooltip />
+            <Area
+              type="monotone"
+              dataKey="close"
+              stroke="#8884d8"
+              fill="#8884d8"
+              fillOpacity={0.3}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
 export const StockDetails = ({ symbol, open, onOpenChange }: StockDetailsProps) => {
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['stockProfile', symbol],
@@ -76,6 +146,7 @@ export const StockDetails = ({ symbol, open, onOpenChange }: StockDetailsProps) 
         {error && <div className="text-red-500">Failed to load stock profile</div>}
         {profile && (
           <div className="p-6 space-y-6">
+            <PriceChart symbol={symbol} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <ProfileSection title="Financial Profile" data={profile.financial_profile} />
               <ProfileSection title="Stock Performance" data={profile.stock_performance} />
