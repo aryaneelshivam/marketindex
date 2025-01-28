@@ -8,9 +8,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface StockDetailsProps {
   symbol: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 interface StockProfile {
@@ -51,37 +59,37 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
   </div>
 );
 
-export const StockDetails = ({ symbol }: StockDetailsProps) => {
+export const StockDetails = ({ symbol, open, onOpenChange }: StockDetailsProps) => {
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['stockProfile', symbol],
     queryFn: () => fetchStockProfile(symbol),
+    enabled: open,
   });
 
-  if (isLoading) {
-    return <Skeleton className="h-[200px] w-full" />;
-  }
-
-  if (error) {
-    return <div className="text-red-500">Failed to load stock profile</div>;
-  }
-
-  if (!profile) {
-    return null;
-  }
-
   return (
-    <div className="p-6 bg-muted/30 rounded-lg space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ProfileSection title="Financial Profile" data={profile.financial_profile} />
-        <ProfileSection title="Stock Performance" data={profile.stock_performance} />
-        <ProfileSection title="Trading Volume" data={profile.trading_volume} />
-        <ProfileSection title="Ownership & Shares" data={profile.ownership_and_shares} />
-        <ProfileSection title="Earnings & Revenue" data={profile.earnings_and_revenue} />
-        <ProfileSection title="Cash & Debt" data={profile.cash_and_debt} />
-        <ProfileSection title="Profitability & Margins" data={profile.profitability_and_margins} />
-        <ProfileSection title="Liquidity & Ratios" data={profile.liquidity_and_ratios} />
-        <ProfileSection title="Earnings & Forecasts" data={profile.earnings_and_forecasts} />
-      </div>
-    </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Stock Details - {symbol}</DialogTitle>
+        </DialogHeader>
+        {isLoading && <Skeleton className="h-[200px] w-full" />}
+        {error && <div className="text-red-500">Failed to load stock profile</div>}
+        {profile && (
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ProfileSection title="Financial Profile" data={profile.financial_profile} />
+              <ProfileSection title="Stock Performance" data={profile.stock_performance} />
+              <ProfileSection title="Trading Volume" data={profile.trading_volume} />
+              <ProfileSection title="Ownership & Shares" data={profile.ownership_and_shares} />
+              <ProfileSection title="Earnings & Revenue" data={profile.earnings_and_revenue} />
+              <ProfileSection title="Cash & Debt" data={profile.cash_and_debt} />
+              <ProfileSection title="Profitability & Margins" data={profile.profitability_and_margins} />
+              <ProfileSection title="Liquidity & Ratios" data={profile.liquidity_and_ratios} />
+              <ProfileSection title="Earnings & Forecasts" data={profile.earnings_and_forecasts} />
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };

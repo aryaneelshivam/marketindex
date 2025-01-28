@@ -7,9 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Signal } from "./Signal";
-import { TrendingDown, TrendingUp, ChevronDown, ChevronUp } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import { useState } from "react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { StockDetails } from "./StockDetails";
 
 interface RSIData {
@@ -39,7 +38,7 @@ interface StockTableProps {
 }
 
 export const StockTable = ({ data }: StockTableProps) => {
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [selectedStock, setSelectedStock] = useState<string | null>(null);
 
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
     if (emaSignal === "BUY" && smaSignal === "BUY") {
@@ -97,93 +96,80 @@ export const StockTable = ({ data }: StockTableProps) => {
         </TableHeader>
         <TableBody>
           {data.map((stock, index) => (
-            <Collapsible
+            <TableRow
               key={stock.Symbol}
-              open={expandedRow === stock.Symbol}
-              onOpenChange={(open) => setExpandedRow(open ? stock.Symbol : null)}
+              className={`hover:bg-muted/50 transition-colors cursor-pointer ${getRowBackgroundColor(
+                stock["Last EMA Signal"],
+                stock["Last SMA Signal"]
+              )}`}
+              onClick={() => setSelectedStock(stock.Symbol)}
             >
-              <CollapsibleTrigger asChild>
-                <TableRow
-                  className={`hover:bg-muted/50 transition-colors cursor-pointer ${getRowBackgroundColor(
-                    stock["Last EMA Signal"],
-                    stock["Last SMA Signal"]
-                  )}`}
-                >
-                  <TableCell className="font-medium text-muted-foreground">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell className="font-medium flex items-center">
-                    {stock.Symbol}
-                    {getTrendIcon(stock["Last EMA Signal"], stock["Last SMA Signal"])}
-                    {expandedRow === stock.Symbol ? (
-                      <ChevronUp className="ml-2 h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Signal signal={stock["Last EMA Signal"]} />
-                  </TableCell>
-                  <TableCell>
-                    <Signal signal={stock["Last SMA Signal"]} />
-                  </TableCell>
-                  <TableCell>
-                    <Signal
-                      signal={stock["MACD Crossover"] === "YES" ? "BUY" : "NEUTRAL"}
-                      className={getNeutralPillColor(stock["MACD Crossover"] === "YES" ? "BUY" : "NEUTRAL")}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Signal 
-                      signal={stock["Volume Divergence"]} 
-                      className={getNeutralPillColor(stock["Volume Divergence"])}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Signal 
-                      signal={stock["ADX Strength"]} 
-                      className={getNeutralPillColor(stock["ADX Strength"])}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-1">
-                      <span className={`text-sm font-medium ${getRSIColor(stock.RSI.Value)}`}>
-                        {stock.RSI.Value.toFixed(2)}
-                      </span>
-                      <Signal 
-                        signal={stock.RSI.Condition} 
-                        className={`w-fit ${getNeutralPillColor(stock.RSI.Condition)}`}
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-1">
-                      <div className={`text-sm font-medium ${getStochColor(
-                        stock.Stochastic.K_Value,
-                        stock.Stochastic.D_Value
-                      )}`}>
-                        <div>K: {stock.Stochastic.K_Value.toFixed(2)}</div>
-                        <div>D: {stock.Stochastic.D_Value.toFixed(2)}</div>
-                      </div>
-                      <Signal 
-                        signal={stock.Stochastic.Condition} 
-                        className={`w-fit ${getNeutralPillColor(stock.Stochastic.Condition)}`}
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <TableRow>
-                  <TableCell colSpan={9} className="p-0">
-                    <StockDetails symbol={stock.Symbol} />
-                  </TableCell>
-                </TableRow>
-              </CollapsibleContent>
-            </Collapsible>
+              <TableCell className="font-medium text-muted-foreground">
+                {index + 1}
+              </TableCell>
+              <TableCell className="font-medium flex items-center">
+                {stock.Symbol}
+                {getTrendIcon(stock["Last EMA Signal"], stock["Last SMA Signal"])}
+              </TableCell>
+              <TableCell>
+                <Signal signal={stock["Last EMA Signal"]} />
+              </TableCell>
+              <TableCell>
+                <Signal signal={stock["Last SMA Signal"]} />
+              </TableCell>
+              <TableCell>
+                <Signal
+                  signal={stock["MACD Crossover"] === "YES" ? "BUY" : "NEUTRAL"}
+                  className={getNeutralPillColor(stock["MACD Crossover"] === "YES" ? "BUY" : "NEUTRAL")}
+                />
+              </TableCell>
+              <TableCell>
+                <Signal 
+                  signal={stock["Volume Divergence"]} 
+                  className={getNeutralPillColor(stock["Volume Divergence"])}
+                />
+              </TableCell>
+              <TableCell>
+                <Signal 
+                  signal={stock["ADX Strength"]} 
+                  className={getNeutralPillColor(stock["ADX Strength"])}
+                />
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-col gap-1">
+                  <span className={`text-sm font-medium ${getRSIColor(stock.RSI.Value)}`}>
+                    {stock.RSI.Value.toFixed(2)}
+                  </span>
+                  <Signal 
+                    signal={stock.RSI.Condition} 
+                    className={`w-fit ${getNeutralPillColor(stock.RSI.Condition)}`}
+                  />
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-col gap-1">
+                  <div className={`text-sm font-medium ${getStochColor(
+                    stock.Stochastic.K_Value,
+                    stock.Stochastic.D_Value
+                  )}`}>
+                    <div>K: {stock.Stochastic.K_Value.toFixed(2)}</div>
+                    <div>D: {stock.Stochastic.D_Value.toFixed(2)}</div>
+                  </div>
+                  <Signal 
+                    signal={stock.Stochastic.Condition} 
+                    className={`w-fit ${getNeutralPillColor(stock.Stochastic.Condition)}`}
+                  />
+                </div>
+              </TableCell>
+            </TableRow>
           ))}
         </TableBody>
       </Table>
+      <StockDetails 
+        symbol={selectedStock ?? ''} 
+        open={!!selectedStock} 
+        onOpenChange={(open) => !open && setSelectedStock(null)} 
+      />
     </div>
   );
 };
