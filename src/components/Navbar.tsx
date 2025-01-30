@@ -13,6 +13,11 @@ export const Navbar = () => {
             </a>
           </div>
           <div className="flex items-center gap-4">
+            <img 
+              src="https://www.openapis.org/wp-content/uploads/sites/3/2016/10/OpenAPI_Pantone-768x204.png" 
+              alt="OpenAPI Badge" 
+              className="h-4 object-contain"
+            />
             <Button
               variant="default"
               size="sm"
@@ -62,15 +67,10 @@ export const Navbar = () => {
           </div>
         </div>
       </nav>
-      <div className="w-full bg-black text-white py-2 px-4 flex items-center justify-center gap-4">
+      <div className="w-full bg-black text-white py-2 px-4 flex items-center justify-center">
         <p className="text-sm">
           🎉 marketindex v1.0.0 has launched! Developed by Aryaneel Shivam
         </p>
-        <img 
-          src="https://www.openapis.org/wp-content/uploads/sites/3/2016/10/OpenAPI_Pantone-768x204.png" 
-          alt="OpenAPI Badge" 
-          className="h-4 object-contain"
-        />
       </div>
     </>
   );
