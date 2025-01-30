@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Github } from "lucide-react";
 
 export const Navbar = () => {
   return (
@@ -12,6 +12,22 @@ export const Navbar = () => {
           </a>
         </div>
         <div className="flex items-center gap-4">
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-black hover:bg-black/90"
+            asChild
+          >
+            <a 
+              href="https://github.com/lovable-grin/stock-signal-simplifier" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <Github className="h-4 w-4" />
+              View on GitHub
+            </a>
+          </Button>
           <Button
             variant="outline"
             size="sm"
