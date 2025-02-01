@@ -6,8 +6,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+
+// ... keep existing code (component implementation)
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -46,9 +49,9 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      <div className="p-4 md:p-8">
+      <div className="flex-1 p-4 md:p-8">
         <div className="mx-auto max-w-[1400px] space-y-6">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Market Analysis</h1>
@@ -221,6 +224,7 @@ const Index = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
