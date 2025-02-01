@@ -6,6 +6,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -14,11 +16,17 @@ const Index = () => {
   const [macdFilter, setMacdFilter] = useState("ALL");
   const [rsiFilter, setRsiFilter] = useState("ALL");
   const [stochFilter, setStochFilter] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
   
   const { data: rawData, isLoading, error } = useStockData(period);
   const { toast } = useToast();
 
   const filteredData = rawData?.filter((stock) => {
+    // First apply search filter
+    const matchesSearch = searchQuery === "" || 
+      stock.Symbol.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Then apply other filters
     const matchesEma = emaFilter === "ALL" || stock["Last EMA Signal"] === emaFilter;
     const matchesSma = smaFilter === "ALL" || stock["Last SMA Signal"] === smaFilter;
     const matchesMacd = macdFilter === "ALL" || 
@@ -26,7 +34,7 @@ const Index = () => {
     const matchesRsi = rsiFilter === "ALL" || stock.RSI.Condition === rsiFilter;
     const matchesStoch = stochFilter === "ALL" || stock.Stochastic.Condition === stochFilter;
     
-    return matchesEma && matchesSma && matchesMacd && matchesRsi && matchesStoch;
+    return matchesSearch && matchesEma && matchesSma && matchesMacd && matchesRsi && matchesStoch;
   });
 
   if (error) {
@@ -49,32 +57,42 @@ const Index = () => {
             </p>
           </div>
 
-        <div className="space-y-6">
-          <div className="rounded-lg border bg-card p-4">
-            <RadioGroup
-              defaultValue="3mo"
-              value={period}
-              onValueChange={setPeriod}
-              className="flex flex-wrap gap-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1mo" id="1mo" />
-                <Label htmlFor="1mo">1 Month</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3mo" id="3mo" />
-                <Label htmlFor="3mo">3 Months</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="6mo" id="6mo" />
-                <Label htmlFor="6mo">6 Months</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1y" id="1y" />
-                <Label htmlFor="1y">1 Year</Label>
-              </div>
-            </RadioGroup>
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search stocks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
           </div>
+
+          <div className="space-y-6">
+            <div className="rounded-lg border bg-card p-4">
+              <RadioGroup
+                defaultValue="3mo"
+                value={period}
+                onValueChange={setPeriod}
+                className="flex flex-wrap gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1mo" id="1mo" />
+                  <Label htmlFor="1mo">1 Month</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="3mo" id="3mo" />
+                  <Label htmlFor="3mo">3 Months</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="6mo" id="6mo" />
+                  <Label htmlFor="6mo">6 Months</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1y" id="1y" />
+                  <Label htmlFor="1y">1 Year</Label>
+                </div>
+              </RadioGroup>
+            </div>
 
           <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
             <div className="rounded-lg border bg-card p-4">
@@ -192,15 +210,15 @@ const Index = () => {
               </RadioGroup>
             </div>
           </div>
-        </div>
 
-        {isLoading ? (
-          <div className="space-y-3">
-            <Skeleton className="h-[640px] w-full rounded-lg" />
+            {isLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-[640px] w-full rounded-lg" />
+              </div>
+            ) : filteredData ? (
+              <StockTable data={filteredData} />
+            ) : null}
           </div>
-        ) : filteredData ? (
-          <StockTable data={filteredData} />
-        ) : null}
         </div>
       </div>
     </div>
