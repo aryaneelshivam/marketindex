@@ -102,7 +102,7 @@ const Index = () => {
     ? filteredData?.slice(0, 10) 
     : isProMode 
       ? filteredData 
-      : filteredData?.slice(0, 50);
+      : filteredData?.slice(0, 20); // Changed from 50 to 20
 
   if (error) {
     toast({
@@ -331,7 +331,7 @@ const Index = () => {
             <>
               <StockTable data={displayData} />
               {!isAuthenticated && <Paywall />}
-              {isAuthenticated && !isProMode && displayData.length >= 50 && (
+              {isAuthenticated && !isProMode && displayData.length >= 20 && (
                 <div className="mt-8">
                   <Paywall />
                 </div>

@@ -28,7 +28,7 @@ export const Paywall = ({ isAuthenticated }: PaywallProps) => {
           <p className="text-muted-foreground text-lg">
             {isAuthenticated 
               ? "Enter your Pro Mode key to unlock unlimited stock analysis, enable offline downloads, and access all 100+ stocks."
-              : "Sign-in to access 50+ stock analysis, enable search functionality and view detailed market insights."}
+              : "Sign-in to access 20+ stock analysis, enable search functionality and view detailed market insights."}
           </p>
           <div className="pt-4">
             {!isAuthenticated && (
