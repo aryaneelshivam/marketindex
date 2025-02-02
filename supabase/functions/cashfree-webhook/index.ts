@@ -18,10 +18,10 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const payload = await req.text(); // Get raw payload
+    const payload = await req.text();
     console.log('Received webhook payload:', payload);
 
-    // Verify webhook signature
+    // Get Cashfree webhook signature and timestamp
     const signature = req.headers.get('x-webhook-signature');
     const timestamp = req.headers.get('x-webhook-timestamp');
     
@@ -29,7 +29,7 @@ serve(async (req) => {
       throw new Error('Missing webhook signature or timestamp');
     }
 
-    // Verify the webhook signature
+    // Verify webhook signature
     const secretKey = Deno.env.get('CASHFREE_SECRET_KEY') ?? '';
     const data = payload + timestamp;
     const expectedSignature = createHmac('sha256', secretKey)
@@ -37,22 +37,41 @@ serve(async (req) => {
       .toString('hex');
 
     if (signature !== expectedSignature) {
+      console.error('Invalid signature received:', signature);
+      console.error('Expected signature:', expectedSignature);
       throw new Error('Invalid webhook signature');
     }
 
-    // Parse the payload after verification
-    const parsedPayload = JSON.parse(payload);
-    
-    // Update payment status in database
+    // Parse and validate the webhook payload
+    const event = JSON.parse(payload);
+    console.log('Parsed webhook event:', event);
+
+    // Verify the payment status
+    if (!event.data || !event.data.order || !event.data.order.order_id) {
+      throw new Error('Invalid webhook payload structure');
+    }
+
+    const orderId = event.data.order.order_id;
+    const paymentStatus = event.data.order.order_status.toLowerCase();
+
+    console.log(`Processing payment status update for order ${orderId}: ${paymentStatus}`);
+
+    // Update payment record in database
     const { error: updateError } = await supabaseClient
       .from('payments')
       .update({ 
-        status: parsedPayload.order.order_status.toLowerCase(),
+        status: paymentStatus,
+        payment_session_id: event.data.order.cf_order_id || null,
         updated_at: new Date().toISOString()
       })
-      .eq('order_id', parsedPayload.order.order_id);
+      .eq('order_id', orderId);
 
-    if (updateError) throw updateError;
+    if (updateError) {
+      console.error('Error updating payment record:', updateError);
+      throw updateError;
+    }
+
+    console.log(`Successfully updated payment status for order ${orderId}`);
 
     return new Response(
       JSON.stringify({ message: 'Webhook processed successfully' }),
@@ -62,7 +81,7 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error('Webhook error:', error);
+    console.error('Webhook processing error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
