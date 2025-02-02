@@ -1,7 +1,7 @@
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 
 export const Paywall = () => {
@@ -65,20 +65,9 @@ export const Paywall = () => {
         return;
       }
 
-      // Create payment session
-      const { data, error } = await supabase.functions.invoke('create-payment', {
-        method: 'POST',
-        body: { email },
-      });
+      // Redirect to Cashfree payment form
+      window.location.href = "https://payments.cashfree.com/forms/marketindex";
 
-      if (error) throw error;
-
-      // Redirect to Cashfree payment page
-      if (data.payment_link) {
-        window.location.href = data.payment_link;
-      } else {
-        throw new Error('No payment link received');
-      }
     } catch (error) {
       console.error('Payment error:', error);
       toast({
