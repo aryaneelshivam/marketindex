@@ -19,7 +19,6 @@ export const AuthForm = () => {
     const email = formData.get("email") as string;
 
     try {
-      // Instead of using admin API, we'll try to sign in with magic link
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -33,16 +32,24 @@ export const AuthForm = () => {
         title: "Success",
         description: "If you are a Pro Member, you will receive a magic link to sign in.",
       });
+
+      // Redirect to home page after successful sign-in
+      navigate("/");
       
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to sign in. Please try again.",
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleBecomePro = () => {
+    // For now, we'll just redirect to the contact page
+    navigate("/contact");
   };
 
   return (
@@ -74,6 +81,23 @@ export const AuthForm = () => {
           {isLoading ? "Loading..." : "Check Access"}
         </Button>
       </form>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or</span>
+        </div>
+      </div>
+
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={handleBecomePro}
+      >
+        Become Pro
+      </Button>
     </div>
   );
 };
