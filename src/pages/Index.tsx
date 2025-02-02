@@ -1,6 +1,5 @@
 import { useStockData } from "@/hooks/use-stock-data";
 import { StockTable } from "@/components/StockTable";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -12,6 +11,7 @@ import { Search, Lock, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
 import { Button } from "@/components/ui/button";
+import { ProModeWindow } from "@/components/ProModeWindow";
 import {
   Tooltip,
   TooltipContent,
@@ -28,6 +28,8 @@ const Index = () => {
   const [stochFilter, setStochFilter] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isProMode, setIsProMode] = useState(false);
   
   const { data: rawData, isLoading, error } = useStockData(period);
   const { toast } = useToast();
@@ -36,19 +38,21 @@ const Index = () => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setIsAuthenticated(!!session);
+      setUserEmail(session?.user?.email || null);
     };
     
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session);
+      setUserEmail(session?.user?.email || null);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const handleDownloadAnalysis = () => {
-    if (!rawData) return;
+    if (!rawData || !isProMode) return;
     
     const csvContent = [
       ["Symbol", "EMA Signal", "SMA Signal", "MACD Crossover", "Volume Divergence", "ADX Strength", "RSI Value", "RSI Condition", "Stochastic K", "Stochastic D", "Stochastic Condition"],
@@ -79,7 +83,7 @@ const Index = () => {
   };
 
   const filteredData = rawData?.filter((stock) => {
-    if (!isAuthenticated) return true; // Show all data when not authenticated
+    if (!isAuthenticated) return true;
     
     const matchesSearch = searchQuery === "" || 
       stock.Symbol.toLowerCase().includes(searchQuery.toLowerCase());
@@ -93,8 +97,12 @@ const Index = () => {
     return matchesSearch && matchesEma && matchesSma && matchesMacd && matchesRsi && matchesStoch;
   });
 
-  // Limit data for non-authenticated users
-  const displayData = isAuthenticated ? filteredData : filteredData?.slice(0, 10);
+  // Limit data based on authentication and pro mode status
+  const displayData = !isAuthenticated 
+    ? filteredData?.slice(0, 10) 
+    : isProMode 
+      ? filteredData 
+      : filteredData?.slice(0, 50);
 
   if (error) {
     toast({
@@ -143,16 +151,28 @@ const Index = () => {
                 </Tooltip>
               </TooltipProvider>
             </div>
-            {isAuthenticated && (
-              <Button
-                onClick={handleDownloadAnalysis}
-                className="whitespace-nowrap"
-                disabled={!rawData}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download Analysis
-              </Button>
-            )}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Button
+                      onClick={handleDownloadAnalysis}
+                      className="whitespace-nowrap"
+                      disabled={!isProMode || !rawData}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Analysis
+                      {!isProMode && <Lock className="w-4 h-4 ml-2" />}
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                {!isProMode && (
+                  <TooltipContent>
+                    <p>Activate Pro Mode to download analysis</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           <div className="space-y-6">
@@ -311,11 +331,22 @@ const Index = () => {
             <>
               <StockTable data={displayData} />
               {!isAuthenticated && <Paywall />}
+              {isAuthenticated && !isProMode && displayData.length >= 50 && (
+                <div className="mt-8">
+                  <Paywall />
+                </div>
+              )}
             </>
           ) : null}
         </div>
       </div>
       <Footer />
+      {isAuthenticated && !isProMode && userEmail && (
+        <ProModeWindow 
+          onProModeActivated={() => setIsProMode(true)} 
+          userEmail={userEmail}
+        />
+      )}
     </div>
   );
 };

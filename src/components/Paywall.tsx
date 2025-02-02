@@ -1,7 +1,11 @@
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 
-export const Paywall = () => {
+interface PaywallProps {
+  isAuthenticated?: boolean;
+}
+
+export const Paywall = ({ isAuthenticated }: PaywallProps) => {
   const navigate = useNavigate();
 
   return (
@@ -19,19 +23,23 @@ export const Paywall = () => {
       <div className="relative p-8 text-center space-y-6">
         <div className="max-w-2xl mx-auto space-y-4">
           <h3 className="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-            Get Full Access
+            {isAuthenticated ? "Upgrade to Pro Mode" : "Get Full Access"}
           </h3>
           <p className="text-muted-foreground text-lg">
-            Sign-in to access 200+ stock analysis, enable search functionality and download analysis reports offline.
+            {isAuthenticated 
+              ? "Enter your Pro Mode key to unlock unlimited stock analysis, enable offline downloads, and access all 100+ stocks."
+              : "Sign-in to access 50+ stock analysis, enable search functionality and view detailed market insights."}
           </p>
           <div className="pt-4">
-            <Button 
-              onClick={() => navigate("/auth")}
-              size="lg"
-              className="min-w-[200px]"
-            >
-              Sign In
-            </Button>
+            {!isAuthenticated && (
+              <Button 
+                onClick={() => navigate("/auth")}
+                size="lg"
+                className="min-w-[200px]"
+              >
+                Sign In
+              </Button>
+            )}
           </div>
         </div>
       </div>

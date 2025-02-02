@@ -45,6 +45,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_keys: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          key_value: string
+          last_used_at: string | null
+          used_by: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_value: string
+          last_used_at?: string | null
+          used_by?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_value?: string
+          last_used_at?: string | null
+          used_by?: string[] | null
+        }
+        Relationships: []
+      }
       stock_data: {
         Row: {
           change_percent: number | null
