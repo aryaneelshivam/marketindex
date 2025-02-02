@@ -2,11 +2,43 @@ import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
-import { Download } from "lucide-react";
+import { useEffect } from "react";
 
 export const Paywall = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Check for payment success on component mount and URL change
+  useEffect(() => {
+    const checkPaymentStatus = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get('order_id');
+
+      if (!orderId) return;
+
+      try {
+        const { data: payments, error } = await supabase
+          .from('payments')
+          .select('*')
+          .eq('order_id', orderId)
+          .eq('status', 'success')
+          .limit(1);
+
+        if (error) throw error;
+
+        if (payments && payments.length > 0) {
+          // Payment successful, trigger download
+          handleDownload();
+          // Clear URL parameters
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+      } catch (error) {
+        console.error('Payment status check error:', error);
+      }
+    };
+
+    checkPaymentStatus();
+  }, [window.location.search]);
 
   const handlePayment = async () => {
     try {
@@ -100,6 +132,11 @@ export const Paywall = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      toast({
+        title: "Success",
+        description: "Your analysis report is being downloaded.",
+      });
     } catch (error) {
       console.error('Download error:', error);
       toast({

@@ -52,6 +52,7 @@ serve(async (req) => {
         },
         order_meta: {
           return_url: 'https://market-index.onrender.com/payment-success?order_id={order_id}',
+          notify_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/cashfree-webhook`
         },
       }),
     })
