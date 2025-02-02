@@ -22,7 +22,7 @@ export const Paywall = () => {
             Get Full Access
           </h3>
           <p className="text-muted-foreground text-lg">
-            Sign-in after becoming pro to access 200+ stock analysis and download analysis reports offline.
+            Sign-in to access 200+ stock analysis, enable search functionality and download analysis reports offline.
           </p>
           <div className="pt-4">
             <Button 
