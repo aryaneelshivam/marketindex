@@ -257,14 +257,14 @@ const Index = () => {
           </div>
 
           {isLoading ? (
-            <div className="space-y-3">
-              <Skeleton className="h-[640px] w-full rounded-lg" />
+            <div className="space-y-4 text-center py-8">
+              <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+              <p className="text-muted-foreground animate-pulse">
+                Fetching latest market data from server and performing analysis...
+              </p>
             </div>
           ) : displayData ? (
-            <>
-              <StockTable data={displayData} />
-              {!isAuthenticated && <Paywall />}
-            </>
+            <StockTable data={displayData} />
           ) : null}
         </div>
       </div>

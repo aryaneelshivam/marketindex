@@ -40,14 +40,14 @@ export const Navbar = () => {
             <Button
               variant="default"
               size="sm"
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate("/auth?mode=signup")}
             >
-              Become Pro
+              Sign Up
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate("/auth?mode=signin")}
             >
               Sign In
             </Button>
