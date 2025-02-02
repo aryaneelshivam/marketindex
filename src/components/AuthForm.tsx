@@ -19,18 +19,19 @@ export const AuthForm = () => {
     const email = formData.get("email") as string;
 
     try {
-      const { data, error } = await supabase.auth.admin.listUsers();
-      if (error) throw error;
-
-      const userExists = data.users.some(user => user.email === email);
+      // Instead of using admin API, we'll try to sign in with magic link
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: window.location.origin,
+        },
+      });
       
-      if (!userExists) {
-        throw new Error("Email not found. Only Pro Members can access the website.");
-      }
+      if (error) throw error;
 
       toast({
         title: "Success",
-        description: "You will be contacted by our sales team shortly.",
+        description: "If you are a Pro Member, you will receive a magic link to sign in.",
       });
       
     } catch (error: any) {
