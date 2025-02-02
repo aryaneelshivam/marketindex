@@ -61,6 +61,9 @@ const Index = () => {
     return matchesSearch && matchesEma && matchesSma && matchesMacd && matchesRsi && matchesStoch;
   });
 
+  // Limit data for non-authenticated users
+  const displayData = isAuthenticated ? filteredData : filteredData?.slice(0, 10);
+
   if (error) {
     toast({
       variant: "destructive",
@@ -257,11 +260,11 @@ const Index = () => {
             <div className="space-y-3">
               <Skeleton className="h-[640px] w-full rounded-lg" />
             </div>
-          ) : filteredData ? (
-            <div className="relative">
-              <StockTable data={filteredData} />
+          ) : displayData ? (
+            <>
+              <StockTable data={displayData} />
               {!isAuthenticated && <Paywall />}
-            </div>
+            </>
           ) : null}
         </div>
       </div>
