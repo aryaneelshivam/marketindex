@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { X } from "lucide-react";
+import { X, ArrowRight } from "lucide-react";
 
 interface ProModeWindowProps {
   onProModeActivated: () => void;
@@ -64,6 +64,10 @@ export const ProModeWindow = ({ onProModeActivated, userEmail }: ProModeWindowPr
     }
   };
 
+  const handleGetProKey = () => {
+    window.open('https://tally.so/r/npJ428', '_blank');
+  };
+
   if (!isOpen) {
     return (
       <Button
@@ -100,6 +104,24 @@ export const ProModeWindow = ({ onProModeActivated, userEmail }: ProModeWindowPr
           disabled={isLoading || !proKey}
         >
           {isLoading ? "Verifying..." : "Activate"}
+        </Button>
+        
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-2 text-muted-foreground">Or</span>
+          </div>
+        </div>
+
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleGetProKey}
+        >
+          Get Pro Key
+          <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </div>
