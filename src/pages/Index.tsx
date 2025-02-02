@@ -8,9 +8,15 @@ import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -41,6 +47,8 @@ const Index = () => {
   }, []);
 
   const filteredData = rawData?.filter((stock) => {
+    if (!isAuthenticated) return true; // Show all data when not authenticated
+    
     const matchesSearch = searchQuery === "" || 
       stock.Symbol.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesEma = emaFilter === "ALL" || stock["Last EMA Signal"] === emaFilter;
@@ -52,9 +60,6 @@ const Index = () => {
     
     return matchesSearch && matchesEma && matchesSma && matchesMacd && matchesRsi && matchesStoch;
   });
-
-  // Limit data for non-authenticated users
-  const displayData = isAuthenticated ? filteredData : filteredData?.slice(0, 10);
 
   if (error) {
     toast({
@@ -77,13 +82,30 @@ const Index = () => {
           </div>
 
           <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search stocks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search stocks..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9"
+                      disabled={!isAuthenticated}
+                    />
+                    {!isAuthenticated && (
+                      <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    )}
+                  </div>
+                </TooltipTrigger>
+                {!isAuthenticated && (
+                  <TooltipContent>
+                    <p>Sign in to access search functionality</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           <div className="space-y-6">
@@ -235,11 +257,11 @@ const Index = () => {
             <div className="space-y-3">
               <Skeleton className="h-[640px] w-full rounded-lg" />
             </div>
-          ) : displayData ? (
-            <>
-              <StockTable data={displayData} />
+          ) : filteredData ? (
+            <div className="relative">
+              <StockTable data={filteredData} />
               {!isAuthenticated && <Paywall />}
-            </>
+            </div>
           ) : null}
         </div>
       </div>
