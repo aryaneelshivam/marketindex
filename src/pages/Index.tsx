@@ -8,9 +8,10 @@ import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
-import { Search, Lock } from "lucide-react";
+import { Search, Lock, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -45,6 +46,37 @@ const Index = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const handleDownloadAnalysis = () => {
+    if (!rawData) return;
+    
+    const csvContent = [
+      ["Symbol", "EMA Signal", "SMA Signal", "MACD Crossover", "Volume Divergence", "ADX Strength", "RSI Value", "RSI Condition", "Stochastic K", "Stochastic D", "Stochastic Condition"],
+      ...rawData.map(stock => [
+        stock.Symbol,
+        stock["Last EMA Signal"],
+        stock["Last SMA Signal"],
+        stock["MACD Crossover"],
+        stock["Volume Divergence"],
+        stock["ADX Strength"],
+        stock.RSI.Value,
+        stock.RSI.Condition,
+        stock.Stochastic.K_Value,
+        stock.Stochastic.D_Value,
+        stock.Stochastic.Condition
+      ])
+    ].map(row => row.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `stock-analysis-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
 
   const filteredData = rawData?.filter((stock) => {
     if (!isAuthenticated) return true; // Show all data when not authenticated
@@ -84,31 +116,43 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="relative w-full max-w-sm">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search stocks..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9"
-                      disabled={!isAuthenticated}
-                    />
-                    {!isAuthenticated && (
-                      <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                    )}
-                  </div>
-                </TooltipTrigger>
-                {!isAuthenticated && (
-                  <TooltipContent>
-                    <p>Sign in to access search functionality</p>
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </TooltipProvider>
+          <div className="flex justify-between items-center gap-4">
+            <div className="relative w-full max-w-sm">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search stocks..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9"
+                        disabled={!isAuthenticated}
+                      />
+                      {!isAuthenticated && (
+                        <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
+                  </TooltipTrigger>
+                  {!isAuthenticated && (
+                    <TooltipContent>
+                      <p>Sign in to access search functionality</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            {isAuthenticated && (
+              <Button
+                onClick={handleDownloadAnalysis}
+                className="whitespace-nowrap"
+                disabled={!rawData}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download Analysis
+              </Button>
+            )}
           </div>
 
           <div className="space-y-6">
@@ -264,7 +308,10 @@ const Index = () => {
               </p>
             </div>
           ) : displayData ? (
-            <StockTable data={displayData} />
+            <>
+              <StockTable data={displayData} />
+              {!isAuthenticated && <Paywall />}
+            </>
           ) : null}
         </div>
       </div>
