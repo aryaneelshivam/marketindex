@@ -5,9 +5,12 @@ import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Info } from "lucide-react";
+import { Progress } from "./ui/progress";
+import { Alert, AlertDescription } from "./ui/alert";
 
 export const AuthForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
@@ -33,13 +36,25 @@ export const AuthForm = () => {
         
         if (error) throw error;
 
+        // Show persistent toast with progress bar
         toast({
-          title: "Success",
-          description: "Account created successfully. You can now sign in.",
+          title: "Account created successfully!",
+          description: "You will be redirected to the home page in 10 seconds. Please check your email for confirmation link.",
+          duration: 10000,
         });
+
+        // Start progress bar
+        let timeLeft = 0;
+        const interval = setInterval(() => {
+          timeLeft += 1;
+          setProgress(timeLeft * 10);
+          
+          if (timeLeft >= 10) {
+            clearInterval(interval);
+            navigate("/");
+          }
+        }, 1000);
         
-        // Redirect to sign in after successful signup
-        navigate("/auth?mode=signin");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -53,7 +68,6 @@ export const AuthForm = () => {
           description: "Signed in successfully.",
         });
 
-        // Redirect to home page after successful sign-in
         navigate("/");
       }
     } catch (error: any) {
@@ -80,6 +94,15 @@ export const AuthForm = () => {
           </p>
         </div>
       </div>
+
+      {mode === "signup" && (
+        <Alert>
+          <AlertDescription className="text-sm text-muted-foreground">
+            After creating your account, you'll receive a confirmation email. 
+            Please click the confirmation link and then sign in through the website.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
@@ -112,6 +135,15 @@ export const AuthForm = () => {
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Loading..." : mode === "signup" ? "Create Account" : "Sign In"}
         </Button>
+
+        {isLoading && mode === "signup" && progress > 0 && (
+          <div className="space-y-2">
+            <Progress value={progress} className="h-2" />
+            <p className="text-sm text-center text-muted-foreground">
+              Redirecting in {10 - Math.floor(progress / 10)} seconds...
+            </p>
+          </div>
+        )}
       </form>
 
       <div className="text-center text-sm">
