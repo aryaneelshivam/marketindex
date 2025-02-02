@@ -161,27 +161,12 @@ export const Paywall = () => {
         <div className="flex items-center justify-center gap-4">
           <Button onClick={() => navigate("/auth")}>Sign In</Button>
           <span className="text-muted-foreground">or</span>
-          <button 
+          <Button 
             onClick={handlePayment}
-            className="flex items-center bg-black text-white px-4 py-2 rounded-xl hover:bg-black/90 transition-colors"
+            className="bg-primary hover:bg-primary/90"
           >
-            <img 
-              src="https://cashfreelogo.cashfree.com/cashfreepayments/logosvgs/Group_4355.svg" 
-              alt="Cashfree" 
-              className="w-10 h-10"
-            />
-            <div className="flex flex-col ml-2 mr-2">
-              <span className="text-sm mb-1">Download Full Report</span>
-              <div className="flex items-center text-xs">
-                <span>Powered By Cashfree</span>
-                <img 
-                  src="https://cashfreelogo.cashfree.com/cashfreepayments/logosvgs/Group_4355.svg" 
-                  alt="Cashfree" 
-                  className="w-4 h-4 ml-1"
-                />
-              </div>
-            </div>
-          </button>
+            Download Full Analysis
+          </Button>
         </div>
       </div>
     </div>
