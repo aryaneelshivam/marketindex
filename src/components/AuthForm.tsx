@@ -19,24 +19,13 @@ export const AuthForm = () => {
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
-    const password = mode === "signup" ? formData.get("password") as string : undefined;
+    const password = formData.get("password") as string;
 
     try {
-      if (mode === "signup" && password) {
+      if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-        });
-        
-        if (error) throw error;
-
-        toast({
-          title: "Success",
-          description: "Please check your email to verify your account.",
-        });
-      } else {
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
           options: {
             emailRedirectTo: window.location.origin,
           },
@@ -46,13 +35,27 @@ export const AuthForm = () => {
 
         toast({
           title: "Success",
-          description: "Check your email for the magic link to sign in.",
+          description: "Account created successfully. You can now sign in.",
         });
-      }
+        
+        // Redirect to sign in after successful signup
+        navigate("/auth?mode=signin");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        
+        if (error) throw error;
 
-      // Redirect to home page after successful sign-in/sign-up
-      navigate("/");
-      
+        toast({
+          title: "Success",
+          description: "Signed in successfully.",
+        });
+
+        // Redirect to home page after successful sign-in
+        navigate("/");
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -92,21 +95,19 @@ export const AuthForm = () => {
           />
         </div>
 
-        {mode === "signup" && (
-          <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium">
-              Password
-            </label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              required
-              placeholder="••••••••"
-              minLength={6}
-            />
-          </div>
-        )}
+        <div className="space-y-2">
+          <label htmlFor="password" className="text-sm font-medium">
+            Password
+          </label>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            required
+            placeholder="••••••••"
+            minLength={6}
+          />
+        </div>
 
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Loading..." : mode === "signup" ? "Create Account" : "Sign In"}
