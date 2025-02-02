@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { X, ArrowRight } from "lucide-react";
+import { X, ArrowRight, Info } from "lucide-react";
 
 interface ProModeWindowProps {
   onProModeActivated: () => void;
@@ -92,6 +92,15 @@ export const ProModeWindow = ({ onProModeActivated, userEmail }: ProModeWindowPr
           <X className="h-4 w-4" />
         </Button>
       </div>
+
+      {/* Info Box */}
+      <div className="bg-muted/50 rounded-lg p-3 mb-4 flex items-start gap-2">
+        <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+        <p className="text-sm text-muted-foreground">
+          Enter the pro mode key to access 100+ stocks with report download. Logged-in users without pro access will be able to view only 50 listings.
+        </p>
+      </div>
+
       <div className="space-y-4">
         <Input
           placeholder="Enter Pro Mode Key"
