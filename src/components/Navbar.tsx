@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
@@ -12,7 +12,8 @@ export const Navbar = () => {
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center">
             <a href="/" className="mr-6 flex items-center space-x-2">
-              <span className="text-xl font-bold tracking-tight">market index.in</span>
+              <Globe className="h-6 w-6" />
+              <span className="text-xl font-bold tracking-tight">market index</span>
             </a>
           </div>
           <div className="flex items-center gap-4">
