@@ -65,8 +65,22 @@ export const Paywall = () => {
         return;
       }
 
-      // Redirect to Cashfree payment form
-      window.location.href = "https://payments.cashfree.com/forms/marketindex";
+      // Create a payment record
+      const orderId = `order_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+      const { error: paymentError } = await supabase
+        .from('payments')
+        .insert({
+          order_id: orderId,
+          amount: 199,
+          currency: 'INR',
+          customer_email: email,
+          status: 'pending'
+        });
+
+      if (paymentError) throw paymentError;
+
+      // Redirect to Cashfree payment form with order ID
+      window.location.href = `https://payments.cashfree.com/forms/marketindex?order_id=${orderId}`;
 
     } catch (error) {
       console.error('Payment error:', error);
