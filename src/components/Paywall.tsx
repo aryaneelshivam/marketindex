@@ -1,8 +1,47 @@
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "./ui/use-toast";
+import { Download } from "lucide-react";
 
 export const Paywall = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleDownload = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('download-stock-analysis', {
+        method: 'POST'
+      });
+
+      if (error) throw error;
+
+      // Create a Blob from the base64 data
+      const byteCharacters = atob(data.fileContent);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      // Create download link and trigger download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'stock-analysis.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to download analysis. Please try again later.",
+      });
+    }
+  };
 
   return (
     <div className="relative mt-8 rounded-lg overflow-hidden">
@@ -12,7 +51,14 @@ export const Paywall = () => {
         <p className="text-muted-foreground">
           Sign in to view all stock listings and detailed market analysis
         </p>
-        <Button onClick={() => navigate("/auth")}>Sign In</Button>
+        <div className="flex items-center justify-center gap-4">
+          <Button onClick={() => navigate("/auth")}>Sign In</Button>
+          <span className="text-muted-foreground">or</span>
+          <Button variant="outline" onClick={handleDownload}>
+            <Download className="mr-2 h-4 w-4" />
+            Download Analysis
+          </Button>
+        </div>
       </div>
     </div>
   );
