@@ -4,13 +4,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-
-// ... keep existing code (component implementation)
+import { supabase } from "@/integrations/supabase/client";
+import { Paywall } from "@/components/Paywall";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -20,16 +20,29 @@ const Index = () => {
   const [rsiFilter, setRsiFilter] = useState("ALL");
   const [stochFilter, setStochFilter] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   const { data: rawData, isLoading, error } = useStockData(period);
   const { toast } = useToast();
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+    };
+    
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const filteredData = rawData?.filter((stock) => {
-    // First apply search filter
     const matchesSearch = searchQuery === "" || 
       stock.Symbol.toLowerCase().includes(searchQuery.toLowerCase());
-
-    // Then apply other filters
     const matchesEma = emaFilter === "ALL" || stock["Last EMA Signal"] === emaFilter;
     const matchesSma = smaFilter === "ALL" || stock["Last SMA Signal"] === smaFilter;
     const matchesMacd = macdFilter === "ALL" || 
@@ -39,6 +52,9 @@ const Index = () => {
     
     return matchesSearch && matchesEma && matchesSma && matchesMacd && matchesRsi && matchesStoch;
   });
+
+  // Limit data for non-authenticated users
+  const displayData = isAuthenticated ? filteredData : filteredData?.slice(0, 10);
 
   if (error) {
     toast({
@@ -214,14 +230,16 @@ const Index = () => {
             </div>
           </div>
 
-            {isLoading ? (
-              <div className="space-y-3">
-                <Skeleton className="h-[640px] w-full rounded-lg" />
-              </div>
-            ) : filteredData ? (
-              <StockTable data={filteredData} />
-            ) : null}
-          </div>
+          {isLoading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-[640px] w-full rounded-lg" />
+            </div>
+          ) : displayData ? (
+            <>
+              <StockTable data={displayData} />
+              {!isAuthenticated && <Paywall />}
+            </>
+          ) : null}
         </div>
       </div>
       <Footer />

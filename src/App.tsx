@@ -4,6 +4,7 @@ import Index from "./pages/Index";
 import Contact from "./pages/Contact";
 import Terms from "./pages/Terms";
 import Refund from "./pages/Refund";
+import Auth from "./pages/Auth";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -17,6 +18,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/refund" element={<Refund />} />
+          <Route path="/auth" element={<Auth />} />
         </Routes>
       </Router>
     </QueryClientProvider>
