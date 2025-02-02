@@ -97,7 +97,7 @@ export const ProModeWindow = ({ onProModeActivated, userEmail }: ProModeWindowPr
       <div className="bg-muted/50 rounded-lg p-3 mb-4 flex items-start gap-2">
         <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
         <p className="text-sm text-muted-foreground">
-          Enter the pro mode key to access 100+ stocks with report download. Logged-in users without pro access will be able to view only 50 listings.
+          Enter the pro mode key to access 100+ stocks with report download. Logged-in users without pro access will be able to view only 20 listings.
         </p>
       </div>
 
