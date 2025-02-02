@@ -4,10 +4,10 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Info } from "lucide-react";
 
 export const AuthForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -18,32 +18,14 @@ export const AuthForm = () => {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const username = formData.get("username") as string;
 
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              username,
-            },
-          },
-        });
-        if (error) throw error;
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account.",
-        });
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        navigate("/");
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      navigate("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -58,33 +40,16 @@ export const AuthForm = () => {
   return (
     <div className="w-full max-w-md space-y-8">
       <div className="text-center">
-        <h2 className="text-2xl font-bold">{isSignUp ? "Create Account" : "Sign In"}</h2>
-        <p className="text-muted-foreground mt-2">
-          {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
-          <button
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-primary hover:underline"
-          >
-            {isSignUp ? "Sign in" : "Create one"}
-          </button>
-        </p>
+        <h2 className="text-2xl font-bold">Sign In</h2>
+        <div className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-muted/50 p-4">
+          <Info className="h-5 w-5 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">
+            Only Pro Members can Sign-in to the website by contacting sales.
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {isSignUp && (
-          <div className="space-y-2">
-            <label htmlFor="username" className="text-sm font-medium">
-              Username
-            </label>
-            <Input
-              id="username"
-              name="username"
-              type="text"
-              required={isSignUp}
-              placeholder="johndoe"
-            />
-          </div>
-        )}
         <div className="space-y-2">
           <label htmlFor="email" className="text-sm font-medium">
             Email
@@ -110,7 +75,7 @@ export const AuthForm = () => {
           />
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Loading..." : isSignUp ? "Create Account" : "Sign In"}
+          {isLoading ? "Loading..." : "Sign In"}
         </Button>
       </form>
     </div>
