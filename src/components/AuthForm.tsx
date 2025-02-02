@@ -17,15 +17,22 @@ export const AuthForm = () => {
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await supabase.auth.admin.listUsers();
       if (error) throw error;
-      navigate("/");
+
+      const userExists = data.users.some(user => user.email === email);
+      
+      if (!userExists) {
+        throw new Error("Email not found. Only Pro Members can access the website.");
+      }
+
+      toast({
+        title: "Success",
+        description: "You will be contacted by our sales team shortly.",
+      });
+      
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -62,20 +69,8 @@ export const AuthForm = () => {
             placeholder="john@example.com"
           />
         </div>
-        <div className="space-y-2">
-          <label htmlFor="password" className="text-sm font-medium">
-            Password
-          </label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            required
-            placeholder="••••••••"
-          />
-        </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Loading..." : "Sign In"}
+          {isLoading ? "Loading..." : "Check Access"}
         </Button>
       </form>
     </div>
