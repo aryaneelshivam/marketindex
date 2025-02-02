@@ -8,8 +8,75 @@ export const Paywall = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const handlePayment = async () => {
+    try {
+      // Get user email
+      const { data: { session } } = await supabase.auth.getSession();
+      const email = session?.user?.email;
+
+      if (!email) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please sign in to continue with the payment.",
+        });
+        return;
+      }
+
+      // Create payment session
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        method: 'POST',
+        body: { email },
+      });
+
+      if (error) throw error;
+
+      // Redirect to Cashfree payment page
+      window.location.href = data.payment_link;
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to initiate payment. Please try again later.",
+      });
+    }
+  };
+
   const handleDownload = async () => {
     try {
+      // Check if user has a successful payment
+      const { data: { session } } = await supabase.auth.getSession();
+      const email = session?.user?.email;
+
+      if (!email) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please sign in to download the analysis.",
+        });
+        return;
+      }
+
+      const { data: payments, error: paymentError } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('customer_email', email)
+        .eq('status', 'success')
+        .limit(1);
+
+      if (paymentError) throw paymentError;
+
+      if (!payments || payments.length === 0) {
+        toast({
+          variant: "destructive",
+          title: "Payment Required",
+          description: "Please purchase the analysis report to download it.",
+        });
+        return;
+      }
+
+      // Download analysis
       const { data, error } = await supabase.functions.invoke('download-stock-analysis', {
         method: 'POST'
       });
@@ -54,9 +121,9 @@ export const Paywall = () => {
         <div className="flex items-center justify-center gap-4">
           <Button onClick={() => navigate("/auth")}>Sign In</Button>
           <span className="text-muted-foreground">or</span>
-          <Button variant="outline" onClick={handleDownload}>
+          <Button variant="outline" onClick={handlePayment}>
             <Download className="mr-2 h-4 w-4" />
-            Download Analysis
+            Download Analysis (₹199)
           </Button>
         </div>
       </div>

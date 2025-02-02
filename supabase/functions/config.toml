@@ -1,4 +1,7 @@
 project_id = "mirovykaaduhmhbncrun"
 
-[download-stock-analysis]
+[functions.download-stock-analysis]
+verify_jwt = false
+
+[functions.create-payment]
 verify_jwt = false
