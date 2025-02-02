@@ -34,12 +34,19 @@ serve(async (req) => {
 
     if (dbError) throw dbError
 
+    const appId = Deno.env.get('CASHFREE_APP_ID')
+    const secretKey = Deno.env.get('CASHFREE_SECRET_KEY')
+    
+    if (!appId || !secretKey) {
+      throw new Error('Missing Cashfree credentials')
+    }
+
     // Create Cashfree payment session
     const response = await fetch('https://sandbox.cashfree.com/pg/orders', {
       method: 'POST',
       headers: {
-        'x-client-id': Deno.env.get('CASHFREE_APP_ID') ?? '',
-        'x-client-secret': Deno.env.get('CASHFREE_SECRET_KEY') ?? '',
+        'x-client-id': appId,
+        'x-client-secret': secretKey,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -51,13 +58,15 @@ serve(async (req) => {
           customer_email: email,
         },
         order_meta: {
-          return_url: 'https://market-index.onrender.com/payment-success?order_id={order_id}',
-          notify_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/cashfree-webhook`
+          return_url: `${req.headers.get('origin')}/payment-success?order_id={order_id}`,
+          notify_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/cashfree-webhook`,
         },
       }),
     })
 
     if (!response.ok) {
+      const errorData = await response.json()
+      console.error('Cashfree API error:', errorData)
       throw new Error('Failed to create payment session')
     }
 

@@ -31,9 +31,19 @@ export const Paywall = () => {
           handleDownload();
           // Clear URL parameters
           window.history.replaceState({}, '', window.location.pathname);
+          // Show success message
+          toast({
+            title: "Payment Successful",
+            description: "Your payment was successful. Your report is being downloaded.",
+          });
         }
       } catch (error) {
         console.error('Payment status check error:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to verify payment status. Please try again.",
+        });
       }
     };
 
@@ -64,7 +74,11 @@ export const Paywall = () => {
       if (error) throw error;
 
       // Redirect to Cashfree payment page
-      window.location.href = data.payment_link;
+      if (data.payment_link) {
+        window.location.href = data.payment_link;
+      } else {
+        throw new Error('No payment link received');
+      }
     } catch (error) {
       console.error('Payment error:', error);
       toast({
