@@ -1,8 +1,11 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -19,22 +22,6 @@ export const Navbar = () => {
               className="h-4 object-contain"
             />
             <Button
-              variant="default"
-              size="sm"
-              className="bg-black hover:bg-black/90"
-              asChild
-            >
-              <a 
-                href="https://github.com/aryaneelshivam/marketindex" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
-              >
-                <Github className="h-4 w-4" />
-                View on GitHub
-              </a>
-            </Button>
-            <Button
               variant="outline"
               size="sm"
               asChild
@@ -50,19 +37,18 @@ export const Navbar = () => {
               </a>
             </Button>
             <Button
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/auth")}
+            >
+              Become Pro
+            </Button>
+            <Button
               variant="outline"
               size="sm"
-              asChild
+              onClick={() => navigate("/auth")}
             >
-              <a 
-                href="https://market-index.onrender.com/docs" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
-              >
-                Market Index API Docs
-                <ExternalLink className="h-4 w-4" />
-              </a>
+              Sign In
             </Button>
           </div>
         </div>
