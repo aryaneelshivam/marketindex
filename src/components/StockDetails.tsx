@@ -161,9 +161,9 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
 
   if (!symbol) {
     return (
-      <div className="fixed top-20 right-4 w-full max-w-[500px] bg-background border rounded-xl shadow-lg p-8">
-        <Alert>
-          <Info className="h-4 w-4" />
+      <div className="fixed bottom-4 right-4">
+        <Alert className="w-[300px] border-black/10">
+          <Info className="h-4 w-4 text-black" />
           <AlertDescription>
             Click on any stock in the list to view its detailed financial information.
           </AlertDescription>
