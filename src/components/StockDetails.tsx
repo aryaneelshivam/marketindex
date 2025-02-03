@@ -71,7 +71,7 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
     <h3 className="text-lg font-semibold mb-2">{title}</h3>
     <Table>
       <TableBody>
-        {Object.entries(data).map(([key, value]) => {
+        {Object.entries(data).map(([key, value], index) => {
           const isNumeric = typeof value === 'number';
           const isPercentage = key.toLowerCase().includes('percent') || key.toLowerCase().includes('ratio');
           const isPositive = isNumeric && value > 0;
@@ -84,7 +84,10 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
             : value?.toString() ?? 'N/A';
 
           return (
-            <TableRow key={key}>
+            <TableRow 
+              key={key}
+              className={index % 2 === 0 ? 'bg-muted/30' : ''}
+            >
               <TableCell className="font-medium capitalize text-sm text-muted-foreground">
                 {key.replace(/([A-Z])/g, ' $1').trim()}
               </TableCell>
