@@ -13,9 +13,13 @@ import {
   ResponsiveContainer, 
   Tooltip, 
   XAxis, 
-  YAxis 
+  YAxis,
+  CartesianGrid
 } from "recharts";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { BellRing, Settings2 } from "lucide-react";
 
 interface StockDetailsProps {
   symbol: string;
@@ -36,6 +40,7 @@ interface StockProfile {
 interface PriceData {
   date: string;
   close: number;
+  volume?: number;
 }
 
 const fetchStockProfile = async (symbol: string): Promise<StockProfile> => {
@@ -55,6 +60,7 @@ const fetchStockHistory = async (symbol: string, period: string): Promise<PriceD
   return data.data.map((item: any) => ({
     date: new Date(item.date).toLocaleDateString(),
     close: item.close,
+    volume: item.volume || 0,
   }));
 };
 
@@ -65,10 +71,10 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
       <TableBody>
         {Object.entries(data).map(([key, value]) => (
           <TableRow key={key}>
-            <TableCell className="font-medium capitalize">
+            <TableCell className="font-medium capitalize text-sm text-muted-foreground">
               {key.replace(/([A-Z])/g, ' $1').trim()}
             </TableCell>
-            <TableCell>{value?.toString() ?? 'N/A'}</TableCell>
+            <TableCell className="text-sm font-medium">{value?.toString() ?? 'N/A'}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -78,6 +84,7 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
 
 const PriceChart = ({ symbol }: { symbol: string }) => {
   const [period, setPeriod] = useState<string>("1mo");
+  const [view, setView] = useState<"price" | "pe">("price");
   
   const { data: priceData, isLoading } = useQuery({
     queryKey: ['stockHistory', symbol, period],
@@ -91,26 +98,61 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Price History</h3>
-        <ToggleGroup type="single" value={period} onValueChange={(value) => value && setPeriod(value)}>
-          <ToggleGroupItem value="1mo">1M</ToggleGroupItem>
-          <ToggleGroupItem value="3mo">3M</ToggleGroupItem>
-          <ToggleGroupItem value="6mo">6M</ToggleGroupItem>
-          <ToggleGroupItem value="1y">1Y</ToggleGroupItem>
+        <ToggleGroup type="single" value={period} onValueChange={(value) => value && setPeriod(value)} className="bg-muted p-1 rounded-lg">
+          <ToggleGroupItem value="1mo" className="text-xs px-3">1M</ToggleGroupItem>
+          <ToggleGroupItem value="3mo" className="text-xs px-3">3M</ToggleGroupItem>
+          <ToggleGroupItem value="6mo" className="text-xs px-3">6M</ToggleGroupItem>
+          <ToggleGroupItem value="1y" className="text-xs px-3">1Y</ToggleGroupItem>
+          <ToggleGroupItem value="3y" className="text-xs px-3">3Y</ToggleGroupItem>
+          <ToggleGroupItem value="5y" className="text-xs px-3">5Y</ToggleGroupItem>
         </ToggleGroup>
+        <div className="flex items-center gap-2">
+          <ToggleGroup type="single" value={view} onValueChange={(value: "price" | "pe") => setView(value)} className="bg-muted p-1 rounded-lg">
+            <ToggleGroupItem value="price" className="text-xs px-3">Price</ToggleGroupItem>
+            <ToggleGroupItem value="pe" className="text-xs px-3">PE Ratio</ToggleGroupItem>
+          </ToggleGroup>
+          <button className="p-2 hover:bg-muted rounded-lg">
+            <BellRing className="w-4 h-4" />
+          </button>
+        </div>
       </div>
-      <div className="h-[300px] w-full">
+      <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={priceData}>
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
+          <AreaChart data={priceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <XAxis 
+              dataKey="date" 
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis 
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+              domain={['auto', 'auto']}
+            />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'var(--background)',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                fontSize: '12px'
+              }}
+            />
             <Area
               type="monotone"
               dataKey="close"
               stroke="#8884d8"
-              fill="#8884d8"
-              fillOpacity={0.3}
+              fillOpacity={1}
+              fill="url(#colorPrice)"
+              strokeWidth={2}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -120,35 +162,79 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
 };
 
 export const StockDetails = ({ symbol }: StockDetailsProps) => {
-  const { data: profile, isLoading, error } = useQuery({
+  const { data: profile, isLoading } = useQuery({
     queryKey: ['stockProfile', symbol],
     queryFn: () => fetchStockProfile(symbol),
     enabled: !!symbol,
   });
 
   return (
-    <div className="fixed top-24 right-4 w-96 max-h-[calc(100vh-120px)] overflow-y-auto bg-background border rounded-lg shadow-lg p-4">
-      <div className="sticky top-0 bg-background pb-4 border-b mb-4">
-        <h2 className="text-xl font-semibold">Stock Details - {symbol}</h2>
-      </div>
-      {isLoading && <Skeleton className="h-[200px] w-full" />}
-      {error && <div className="text-red-500">Failed to load stock profile</div>}
-      {profile && (
-        <div className="space-y-6">
-          <PriceChart symbol={symbol} />
-          <div className="space-y-6">
-            <ProfileSection title="Financial Profile" data={profile.financial_profile} />
-            <ProfileSection title="Stock Performance" data={profile.stock_performance} />
-            <ProfileSection title="Trading Volume" data={profile.trading_volume} />
-            <ProfileSection title="Ownership & Shares" data={profile.ownership_and_shares} />
-            <ProfileSection title="Earnings & Revenue" data={profile.earnings_and_revenue} />
-            <ProfileSection title="Cash & Debt" data={profile.cash_and_debt} />
-            <ProfileSection title="Profitability & Margins" data={profile.profitability_and_margins} />
-            <ProfileSection title="Liquidity & Ratios" data={profile.liquidity_and_ratios} />
-            <ProfileSection title="Earnings & Forecasts" data={profile.earnings_and_forecasts} />
-          </div>
+    <div className="fixed top-20 right-4 w-full max-w-[500px] max-h-[calc(100vh-100px)] overflow-y-auto bg-background border rounded-xl shadow-lg">
+      <div className="sticky top-0 bg-background p-4 border-b z-10">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">{symbol}</h2>
+          <button className="p-2 hover:bg-muted rounded-lg">
+            <Settings2 className="w-4 h-4" />
+          </button>
         </div>
-      )}
+        <PriceChart symbol={symbol} />
+      </div>
+      
+      <div className="p-4">
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="w-full mb-4">
+            <TabsTrigger value="overview" className="flex-1">Overview</TabsTrigger>
+            <TabsTrigger value="financials" className="flex-1">Financials</TabsTrigger>
+            <TabsTrigger value="peers" className="flex-1">Peers</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="overview" className="space-y-6">
+            {isLoading ? (
+              <div className="space-y-4">
+                <Skeleton className="h-[100px] w-full" />
+                <Skeleton className="h-[100px] w-full" />
+                <Skeleton className="h-[100px] w-full" />
+              </div>
+            ) : profile ? (
+              <>
+                <ProfileSection title="Financial Profile" data={profile.financial_profile} />
+                <ProfileSection title="Stock Performance" data={profile.stock_performance} />
+                <ProfileSection title="Trading Volume" data={profile.trading_volume} />
+              </>
+            ) : null}
+          </TabsContent>
+          
+          <TabsContent value="financials" className="space-y-6">
+            {isLoading ? (
+              <div className="space-y-4">
+                <Skeleton className="h-[100px] w-full" />
+                <Skeleton className="h-[100px] w-full" />
+              </div>
+            ) : profile ? (
+              <>
+                <ProfileSection title="Earnings & Revenue" data={profile.earnings_and_revenue} />
+                <ProfileSection title="Cash & Debt" data={profile.cash_and_debt} />
+                <ProfileSection title="Profitability & Margins" data={profile.profitability_and_margins} />
+              </>
+            ) : null}
+          </TabsContent>
+          
+          <TabsContent value="peers" className="space-y-6">
+            {isLoading ? (
+              <div className="space-y-4">
+                <Skeleton className="h-[100px] w-full" />
+                <Skeleton className="h-[100px] w-full" />
+              </div>
+            ) : profile ? (
+              <>
+                <ProfileSection title="Ownership & Shares" data={profile.ownership_and_shares} />
+                <ProfileSection title="Liquidity & Ratios" data={profile.liquidity_and_ratios} />
+                <ProfileSection title="Earnings & Forecasts" data={profile.earnings_and_forecasts} />
+              </>
+            ) : null}
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
