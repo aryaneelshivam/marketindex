@@ -38,7 +38,7 @@ interface StockTableProps {
 }
 
 export const StockTable = ({ data }: StockTableProps) => {
-  const [selectedStock, setSelectedStock] = useState<string>(data[0]?.Symbol || '');
+  const [selectedStock, setSelectedStock] = useState<string | null>(data[0]?.Symbol || null);
 
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
     if (emaSignal === "BUY" && smaSignal === "BUY") {
@@ -167,7 +167,10 @@ export const StockTable = ({ data }: StockTableProps) => {
           ))}
         </TableBody>
       </Table>
-      <StockDetails symbol={selectedStock} />
+      <StockDetails 
+        symbol={selectedStock || ''} 
+        onClose={() => setSelectedStock(null)} 
+      />
     </div>
   );
 };

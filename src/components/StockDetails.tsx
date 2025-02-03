@@ -18,11 +18,12 @@ import {
 } from "recharts";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { BellRing, Settings2 } from "lucide-react";
+import { X, Info } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface StockDetailsProps {
   symbol: string;
+  onClose: () => void;
 }
 
 interface StockProfile {
@@ -84,7 +85,6 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
 
 const PriceChart = ({ symbol }: { symbol: string }) => {
   const [period, setPeriod] = useState<string>("1mo");
-  const [view, setView] = useState<"price" | "pe">("price");
   
   const { data: priceData, isLoading } = useQuery({
     queryKey: ['stockHistory', symbol, period],
@@ -106,15 +106,6 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
           <ToggleGroupItem value="3y" className="text-xs px-3">3Y</ToggleGroupItem>
           <ToggleGroupItem value="5y" className="text-xs px-3">5Y</ToggleGroupItem>
         </ToggleGroup>
-        <div className="flex items-center gap-2">
-          <ToggleGroup type="single" value={view} onValueChange={(value: "price" | "pe") => setView(value)} className="bg-muted p-1 rounded-lg">
-            <ToggleGroupItem value="price" className="text-xs px-3">Price</ToggleGroupItem>
-            <ToggleGroupItem value="pe" className="text-xs px-3">PE Ratio</ToggleGroupItem>
-          </ToggleGroup>
-          <button className="p-2 hover:bg-muted rounded-lg">
-            <BellRing className="w-4 h-4" />
-          </button>
-        </div>
       </div>
       <div className="h-[400px] w-full overflow-x-auto">
         <div className="min-w-[800px] h-full">
@@ -164,20 +155,36 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
   );
 };
 
-export const StockDetails = ({ symbol }: StockDetailsProps) => {
+export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ['stockProfile', symbol],
     queryFn: () => fetchStockProfile(symbol),
     enabled: !!symbol,
   });
 
+  if (!symbol) {
+    return (
+      <div className="fixed top-20 right-4 w-full max-w-[500px] bg-background border rounded-xl shadow-lg p-8">
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            Click on any stock in the list to view its detailed financial information.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed top-20 right-4 w-full max-w-[500px] max-h-[calc(100vh-100px)] overflow-y-auto bg-background border rounded-xl shadow-lg">
       <div className="sticky top-0 bg-background p-4 border-b z-10">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">{symbol}</h2>
-          <button className="p-2 hover:bg-muted rounded-lg">
-            <Settings2 className="w-4 h-4" />
+          <button 
+            onClick={onClose}
+            className="p-2 hover:bg-muted rounded-lg"
+          >
+            <X className="w-4 h-4" />
           </button>
         </div>
         <PriceChart symbol={symbol} />
