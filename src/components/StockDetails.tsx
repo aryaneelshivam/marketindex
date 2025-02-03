@@ -1,19 +1,18 @@
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Info } from "lucide-react";
-import { formatNumber } from "@/lib/formatNumber";
-import { cn } from "@/lib/utils";
 
 interface StockDetailsProps {
-  stock: any | null;
-  isOpen: boolean;
+  symbol: string;
   onClose: () => void;
 }
 
-export function StockDetails({ stock, isOpen, onClose }: StockDetailsProps) {
+export function StockDetails({ symbol, onClose }: StockDetailsProps) {
+  const isOpen = Boolean(symbol);
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent>
-        {!stock ? (
+        {!symbol ? (
           <div className="flex flex-col items-center justify-center h-full space-y-4 text-center">
             <div className="p-4 rounded-full bg-muted/30">
               <Info className="w-8 h-8 text-foreground" />
@@ -29,13 +28,9 @@ export function StockDetails({ stock, isOpen, onClose }: StockDetailsProps) {
           </div>
         ) : (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">{stock.Symbol}</h2>
-            <p className="text-lg">Current Price: {formatNumber(stock.Price)}</p>
-            <p className="text-sm text-muted-foreground">Market Cap: {formatNumber(stock.MarketCap)}</p>
-            <p className="text-sm text-muted-foreground">52 Week High: {formatNumber(stock.WeekHigh)}</p>
-            <p className="text-sm text-muted-foreground">52 Week Low: {formatNumber(stock.WeekLow)}</p>
-            <p className="text-sm text-muted-foreground">P/E Ratio: {formatNumber(stock.PERatio)}</p>
-            <p className="text-sm text-muted-foreground">Dividend Yield: {formatNumber(stock.DividendYield)}</p>
+            <h2 className="text-2xl font-bold">{symbol}</h2>
+            {/* We'll keep this simple for now since we don't have the stock data yet */}
+            <p className="text-muted-foreground">Loading stock details...</p>
           </div>
         )}
       </SheetContent>
