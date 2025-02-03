@@ -70,14 +70,26 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
     <h3 className="text-lg font-semibold mb-2">{title}</h3>
     <Table>
       <TableBody>
-        {Object.entries(data).map(([key, value]) => (
-          <TableRow key={key}>
-            <TableCell className="font-medium capitalize text-sm text-muted-foreground">
-              {key.replace(/([A-Z])/g, ' $1').trim()}
-            </TableCell>
-            <TableCell className="text-sm font-medium">{value?.toString() ?? 'N/A'}</TableCell>
-          </TableRow>
-        ))}
+        {Object.entries(data).map(([key, value]) => {
+          const formattedValue = typeof value === 'number' 
+            ? new Intl.NumberFormat('en-US', {
+                style: value > 100 ? 'decimal' : 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }).format(value)
+            : value?.toString() ?? 'N/A';
+
+          return (
+            <TableRow key={key}>
+              <TableCell className="font-medium capitalize text-sm text-muted-foreground">
+                {key.replace(/([A-Z])/g, ' $1').trim()}
+              </TableCell>
+              <TableCell className="text-sm font-semibold">
+                {formattedValue}
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   </div>

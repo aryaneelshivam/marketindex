@@ -12,6 +12,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
 import { Button } from "@/components/ui/button";
 import { StockDetails } from "@/components/StockDetails";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -126,18 +132,29 @@ const Index = () => {
                 disabled={!isAuthenticated}
               />
             </div>
-            <Button
-              onClick={handleDownloadAnalysis}
-              className="whitespace-nowrap"
-              disabled={!isAuthenticated}
-            >
-              {isAuthenticated ? (
-                <Download className="w-4 h-4 mr-2" />
-              ) : (
-                <Lock className="w-4 h-4 mr-2" />
-              )}
-              Download Analysis
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={handleDownloadAnalysis}
+                    className="whitespace-nowrap"
+                    disabled={!isAuthenticated}
+                  >
+                    {isAuthenticated ? (
+                      <Download className="w-4 h-4 mr-2" />
+                    ) : (
+                      <Lock className="w-4 h-4 mr-2" />
+                    )}
+                    Download Analysis
+                  </Button>
+                </TooltipTrigger>
+                {!isAuthenticated && (
+                  <TooltipContent>
+                    <p>Sign in to download analysis data</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           <div className="space-y-6">
