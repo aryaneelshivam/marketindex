@@ -18,8 +18,9 @@ import {
 } from "recharts";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X, Info } from "lucide-react";
+import { X, Info, TrendingUp, TrendingDown } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { formatNumber } from "@/lib/formatNumber";
 
 interface StockDetailsProps {
   symbol: string;
@@ -71,12 +72,15 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
     <Table>
       <TableBody>
         {Object.entries(data).map(([key, value]) => {
-          const formattedValue = typeof value === 'number' 
-            ? new Intl.NumberFormat('en-US', {
-                style: value > 100 ? 'decimal' : 'decimal',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }).format(value)
+          const isNumeric = typeof value === 'number';
+          const isPercentage = key.toLowerCase().includes('percent') || key.toLowerCase().includes('ratio');
+          const isPositive = isNumeric && value > 0;
+          const isNegative = isNumeric && value < 0;
+          
+          const formattedValue = isNumeric
+            ? isPercentage
+              ? `${value.toFixed(2)}%`
+              : formatNumber(value)
             : value?.toString() ?? 'N/A';
 
           return (
@@ -84,8 +88,13 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
               <TableCell className="font-medium capitalize text-sm text-muted-foreground">
                 {key.replace(/([A-Z])/g, ' $1').trim()}
               </TableCell>
-              <TableCell className="text-sm font-semibold">
+              <TableCell className={`text-sm font-semibold flex items-center gap-2
+                ${isPositive ? 'text-signal-buy' : ''}
+                ${isNegative ? 'text-signal-sell' : ''}`}
+              >
                 {formattedValue}
+                {isPositive && <TrendingUp className="w-4 h-4" />}
+                {isNegative && <TrendingDown className="w-4 h-4" />}
               </TableCell>
             </TableRow>
           );
