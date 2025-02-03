@@ -6,12 +6,6 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { 
   Area, 
@@ -21,12 +15,10 @@ import {
   XAxis, 
   YAxis 
 } from "recharts";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface StockDetailsProps {
   symbol: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
 }
 
 interface StockProfile {
@@ -110,10 +102,7 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={priceData}>
-            <XAxis 
-              dataKey="date"
-              tickFormatter={(value) => value}
-            />
+            <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
             <Area
@@ -130,38 +119,36 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
   );
 };
 
-export const StockDetails = ({ symbol, open, onOpenChange }: StockDetailsProps) => {
+export const StockDetails = ({ symbol }: StockDetailsProps) => {
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['stockProfile', symbol],
     queryFn: () => fetchStockProfile(symbol),
-    enabled: open,
+    enabled: !!symbol,
   });
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Stock Details - {symbol}</DialogTitle>
-        </DialogHeader>
-        {isLoading && <Skeleton className="h-[200px] w-full" />}
-        {error && <div className="text-red-500">Failed to load stock profile</div>}
-        {profile && (
-          <div className="p-6 space-y-6">
-            <PriceChart symbol={symbol} />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ProfileSection title="Financial Profile" data={profile.financial_profile} />
-              <ProfileSection title="Stock Performance" data={profile.stock_performance} />
-              <ProfileSection title="Trading Volume" data={profile.trading_volume} />
-              <ProfileSection title="Ownership & Shares" data={profile.ownership_and_shares} />
-              <ProfileSection title="Earnings & Revenue" data={profile.earnings_and_revenue} />
-              <ProfileSection title="Cash & Debt" data={profile.cash_and_debt} />
-              <ProfileSection title="Profitability & Margins" data={profile.profitability_and_margins} />
-              <ProfileSection title="Liquidity & Ratios" data={profile.liquidity_and_ratios} />
-              <ProfileSection title="Earnings & Forecasts" data={profile.earnings_and_forecasts} />
-            </div>
+    <div className="fixed top-24 right-4 w-96 max-h-[calc(100vh-120px)] overflow-y-auto bg-background border rounded-lg shadow-lg p-4">
+      <div className="sticky top-0 bg-background pb-4 border-b mb-4">
+        <h2 className="text-xl font-semibold">Stock Details - {symbol}</h2>
+      </div>
+      {isLoading && <Skeleton className="h-[200px] w-full" />}
+      {error && <div className="text-red-500">Failed to load stock profile</div>}
+      {profile && (
+        <div className="space-y-6">
+          <PriceChart symbol={symbol} />
+          <div className="space-y-6">
+            <ProfileSection title="Financial Profile" data={profile.financial_profile} />
+            <ProfileSection title="Stock Performance" data={profile.stock_performance} />
+            <ProfileSection title="Trading Volume" data={profile.trading_volume} />
+            <ProfileSection title="Ownership & Shares" data={profile.ownership_and_shares} />
+            <ProfileSection title="Earnings & Revenue" data={profile.earnings_and_revenue} />
+            <ProfileSection title="Cash & Debt" data={profile.cash_and_debt} />
+            <ProfileSection title="Profitability & Margins" data={profile.profitability_and_margins} />
+            <ProfileSection title="Liquidity & Ratios" data={profile.liquidity_and_ratios} />
+            <ProfileSection title="Earnings & Forecasts" data={profile.earnings_and_forecasts} />
           </div>
-        )}
-      </DialogContent>
-    </Dialog>
+        </div>
+      )}
+    </div>
   );
 };

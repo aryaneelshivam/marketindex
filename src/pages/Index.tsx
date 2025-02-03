@@ -11,13 +11,7 @@ import { Search, Lock, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
 import { Button } from "@/components/ui/button";
-import { ProModeWindow } from "@/components/ProModeWindow";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { StockDetails } from "@/components/StockDetails";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -29,7 +23,6 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [isProMode, setIsProMode] = useState(false);
   
   const { data: rawData, isLoading, error } = useStockData(period);
   const { toast } = useToast();
@@ -52,7 +45,7 @@ const Index = () => {
   }, []);
 
   const handleDownloadAnalysis = () => {
-    if (!rawData || !isProMode) return;
+    if (!rawData) return;
     
     const csvContent = [
       ["Symbol", "EMA Signal", "SMA Signal", "MACD Crossover", "Volume Divergence", "ADX Strength", "RSI Value", "RSI Condition", "Stochastic K", "Stochastic D", "Stochastic Condition"],
@@ -97,12 +90,10 @@ const Index = () => {
     return matchesSearch && matchesEma && matchesSma && matchesMacd && matchesRsi && matchesStoch;
   });
 
-  // Limit data based on authentication and pro mode status
+  // Limit data based on authentication status
   const displayData = !isAuthenticated 
-    ? filteredData?.slice(0, 10) 
-    : isProMode 
-      ? filteredData 
-      : filteredData?.slice(0, 20); // Changed from 50 to 20
+    ? filteredData?.slice(0, 20) 
+    : filteredData;
 
   if (error) {
     toast({
@@ -126,53 +117,24 @@ const Index = () => {
 
           <div className="flex justify-between items-center gap-4">
             <div className="relative w-full max-w-sm">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Search stocks..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9"
-                        disabled={!isAuthenticated}
-                      />
-                      {!isAuthenticated && (
-                        <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      )}
-                    </div>
-                  </TooltipTrigger>
-                  {!isAuthenticated && (
-                    <TooltipContent>
-                      <p>Sign in to access search functionality</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </TooltipProvider>
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search stocks..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+                disabled={!isAuthenticated}
+              />
             </div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div>
-                    <Button
-                      onClick={handleDownloadAnalysis}
-                      className="whitespace-nowrap"
-                      disabled={!isProMode || !rawData}
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Analysis
-                      {!isProMode && <Lock className="w-4 h-4 ml-2" />}
-                    </Button>
-                  </div>
-                </TooltipTrigger>
-                {!isProMode && (
-                  <TooltipContent>
-                    <p>Activate Pro Mode to download analysis</p>
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </TooltipProvider>
+            {isAuthenticated && (
+              <Button
+                onClick={handleDownloadAnalysis}
+                className="whitespace-nowrap"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download Analysis
+              </Button>
+            )}
           </div>
 
           <div className="space-y-6">
@@ -331,22 +293,11 @@ const Index = () => {
             <>
               <StockTable data={displayData} />
               {!isAuthenticated && <Paywall />}
-              {isAuthenticated && !isProMode && displayData.length >= 20 && (
-                <div className="mt-8">
-                  <Paywall />
-                </div>
-              )}
             </>
           ) : null}
         </div>
       </div>
       <Footer />
-      {isAuthenticated && !isProMode && userEmail && (
-        <ProModeWindow 
-          onProModeActivated={() => setIsProMode(true)} 
-          userEmail={userEmail}
-        />
-      )}
     </div>
   );
 };

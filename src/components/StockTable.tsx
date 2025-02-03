@@ -38,7 +38,7 @@ interface StockTableProps {
 }
 
 export const StockTable = ({ data }: StockTableProps) => {
-  const [selectedStock, setSelectedStock] = useState<string | null>(null);
+  const [selectedStock, setSelectedStock] = useState<string>(data[0]?.Symbol || '');
 
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
     if (emaSignal === "BUY" && smaSignal === "BUY") {
@@ -98,7 +98,9 @@ export const StockTable = ({ data }: StockTableProps) => {
           {data.map((stock, index) => (
             <TableRow
               key={stock.Symbol}
-              className={`hover:bg-muted/50 transition-colors cursor-pointer ${getRowBackgroundColor(
+              className={`hover:bg-muted/50 transition-colors cursor-pointer ${
+                selectedStock === stock.Symbol ? 'bg-muted' : ''
+              } ${getRowBackgroundColor(
                 stock["Last EMA Signal"],
                 stock["Last SMA Signal"]
               )}`}
@@ -165,11 +167,7 @@ export const StockTable = ({ data }: StockTableProps) => {
           ))}
         </TableBody>
       </Table>
-      <StockDetails 
-        symbol={selectedStock ?? ''} 
-        open={!!selectedStock} 
-        onOpenChange={(open) => !open && setSelectedStock(null)} 
-      />
+      <StockDetails symbol={selectedStock} />
     </div>
   );
 };
