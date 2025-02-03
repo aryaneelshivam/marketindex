@@ -107,49 +107,46 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
           <ToggleGroupItem value="5y" className="text-xs px-3">5Y</ToggleGroupItem>
         </ToggleGroup>
       </div>
-      <div className="h-[400px] w-full overflow-x-auto">
-        <div className="min-w-[800px] h-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={priceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <XAxis 
-                dataKey="date" 
-                tick={{ fontSize: 12 }}
-                tickLine={false}
-                axisLine={false}
-                allowDataOverflow={true}
-              />
-              <YAxis 
-                tick={{ fontSize: 12 }}
-                tickLine={false}
-                axisLine={false}
-                domain={['auto', 'auto']}
-              />
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'var(--background)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '8px',
-                  fontSize: '12px'
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="close"
-                stroke="#8884d8"
-                fillOpacity={1}
-                fill="url(#colorPrice)"
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+      <div className="h-[400px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={priceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <XAxis 
+              dataKey="date" 
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis 
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+              domain={['auto', 'auto']}
+            />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: 'var(--background)',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                fontSize: '12px'
+              }}
+            />
+            <Area
+              type="monotone"
+              dataKey="close"
+              stroke="#8884d8"
+              fillOpacity={1}
+              fill="url(#colorPrice)"
+              strokeWidth={2}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
@@ -177,7 +174,7 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
 
   return (
     <div className="fixed top-20 right-4 w-full max-w-[500px] max-h-[calc(100vh-100px)] overflow-y-auto bg-background border rounded-xl shadow-lg">
-      <div className="sticky top-0 bg-background p-4 border-b z-10">
+      <div className="bg-background p-4 border-b">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">{symbol}</h2>
           <button 
