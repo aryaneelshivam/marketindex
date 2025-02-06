@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { ExternalLink, Globe, Menu, X } from "lucide-react";
+import { ExternalLink, TrendingUpDown, Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -94,7 +95,7 @@ export const Navbar = () => {
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center">
             <a href="/" className="mr-6 flex items-center space-x-2">
-              <Globe className="h-6 w-6" />
+              <TrendingUpDown className="h-6 w-6" />
               <span className="text-xl font-bold tracking-tight">market index</span>
             </a>
           </div>
@@ -138,3 +139,4 @@ export const Navbar = () => {
     </>
   );
 };
+
