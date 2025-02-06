@@ -159,8 +159,8 @@ export const StockTable = ({ data }: StockTableProps) => {
                       stock.Stochastic.K_Value,
                       stock.Stochastic.D_Value
                     )}`}>
-                      <div>K: {stock.Stochastic.K_Value.toFixed(2)}</div>
-                      <div>D: {stock.Stochastic.D_Value.toFixed(2)}</div>
+                      <div>K: {stock.Stochastic.K_Value?.toFixed(2) || 'N/A'}</div>
+                      <div>D: {stock.Stochastic.D_Value?.toFixed(2) || 'N/A'}</div>
                     </div>
                     <Signal 
                       signal={stock.Stochastic.Condition} 
