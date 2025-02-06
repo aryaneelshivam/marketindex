@@ -17,8 +17,8 @@ interface RSIData {
 }
 
 interface StochasticData {
-  K_Value: number;
-  D_Value: number;
+  k_value: number;
+  d_value: number;
   Condition: string;
 }
 
@@ -151,11 +151,11 @@ export const StockTable = ({ data }: StockTableProps) => {
               <TableCell>
                 <div className="flex flex-col gap-1">
                   <div className={`text-sm font-medium ${getStochColor(
-                    stock.Stochastic.K_Value,
-                    stock.Stochastic.D_Value
+                    stock.Stochastic.k_value,
+                    stock.Stochastic.d_value
                   )}`}>
-                    <div>K: {stock.Stochastic.K_Value.toFixed(2)}</div>
-                    <div>D: {stock.Stochastic.D_Value.toFixed(2)}</div>
+                    <div>K: {stock.Stochastic.k_value.toFixed(2)}</div>
+                    <div>D: {stock.Stochastic.d_value.toFixed(2)}</div>
                   </div>
                   <Signal 
                     signal={stock.Stochastic.Condition} 

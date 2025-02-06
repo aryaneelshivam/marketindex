@@ -8,8 +8,8 @@ interface RSIData {
 }
 
 interface StochasticData {
-  K_Value: number;
-  D_Value: number;
+  k_value: number;
+  d_value: number;
   Condition: string;
 }
 
