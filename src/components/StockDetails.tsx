@@ -214,9 +214,9 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
       <div className="p-4">
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="w-full mb-4">
-            <TabsTrigger value="overview" className="flex-1">Overview</TabsTrigger>
-            <TabsTrigger value="financials" className="flex-1">Financials</TabsTrigger>
-            <TabsTrigger value="peers" className="flex-1">Peers</TabsTrigger>
+            <TabsTrigger value="overview" className="flex-1">Overview 🔎</TabsTrigger>
+            <TabsTrigger value="financials" className="flex-1">Financials 💰</TabsTrigger>
+            <TabsTrigger value="peers" className="flex-1">Peers ⛓️‍💥</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="space-y-6">
