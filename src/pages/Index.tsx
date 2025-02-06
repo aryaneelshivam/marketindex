@@ -71,8 +71,8 @@ const Index = () => {
         stock["ADX Strength"],
         stock.RSI.Value,
         stock.RSI.Condition,
-        stock.Stochastic.K_Value,
-        stock.Stochastic.D_Value,
+        stock.Stochastic.k_value,
+        stock.Stochastic.d_value,
         stock.Stochastic.Condition
       ])
     ].map(row => row.join(",")).join("\n");
