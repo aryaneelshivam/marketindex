@@ -29,8 +29,8 @@ interface StockData {
   "MACD Crossover": string;
   "Volume Divergence": string;
   "ADX Strength": string;
-  RSI?: RSIData;
-  Stochastic?: StochasticData;
+  RSI: RSIData;
+  Stochastic: StochasticData;
 }
 
 interface StockTableProps {
@@ -60,15 +60,13 @@ export const StockTable = ({ data }: StockTableProps) => {
     return null;
   };
 
-  const getRSIColor = (value?: number) => {
-    if (!value) return "text-muted-foreground";
+  const getRSIColor = (value: number) => {
     if (value >= 70) return "text-signal-sell font-semibold";
     if (value <= 30) return "text-signal-buy font-semibold";
     return "text-muted-foreground";
   };
 
-  const getStochColor = (kValue?: number, dValue?: number) => {
-    if (!kValue || !dValue) return "text-muted-foreground";
+  const getStochColor = (kValue: number, dValue: number) => {
     const avgValue = (kValue + dValue) / 2;
     if (avgValue >= 80) return "text-signal-sell font-semibold";
     if (avgValue <= 20) return "text-signal-buy font-semibold";
@@ -141,36 +139,28 @@ export const StockTable = ({ data }: StockTableProps) => {
               </TableCell>
               <TableCell>
                 <div className="flex flex-col gap-1">
-                  {stock.RSI && (
-                    <>
-                      <span className={`text-sm font-medium ${getRSIColor(stock.RSI.Value)}`}>
-                        {stock.RSI.Value.toFixed(2)}
-                      </span>
-                      <Signal 
-                        signal={stock.RSI.Condition} 
-                        className={`w-fit ${getNeutralPillColor(stock.RSI.Condition)}`}
-                      />
-                    </>
-                  )}
+                  <span className={`text-sm font-medium ${getRSIColor(stock.RSI.Value)}`}>
+                    {stock.RSI.Value.toFixed(2)}
+                  </span>
+                  <Signal 
+                    signal={stock.RSI.Condition} 
+                    className={`w-fit ${getNeutralPillColor(stock.RSI.Condition)}`}
+                  />
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex flex-col gap-1">
-                  {stock.Stochastic && (
-                    <>
-                      <div className={`text-sm font-medium ${getStochColor(
-                        stock.Stochastic.K_Value,
-                        stock.Stochastic.D_Value
-                      )}`}>
-                        <div>K: {stock.Stochastic.K_Value.toFixed(2)}</div>
-                        <div>D: {stock.Stochastic.D_Value.toFixed(2)}</div>
-                      </div>
-                      <Signal 
-                        signal={stock.Stochastic.Condition} 
-                        className={`w-fit ${getNeutralPillColor(stock.Stochastic.Condition)}`}
-                      />
-                    </>
-                  )}
+                  <div className={`text-sm font-medium ${getStochColor(
+                    stock.Stochastic.K_Value,
+                    stock.Stochastic.D_Value
+                  )}`}>
+                    <div>K: {stock.Stochastic.K_Value.toFixed(2)}</div>
+                    <div>D: {stock.Stochastic.D_Value.toFixed(2)}</div>
+                  </div>
+                  <Signal 
+                    signal={stock.Stochastic.Condition} 
+                    className={`w-fit ${getNeutralPillColor(stock.Stochastic.Condition)}`}
+                  />
                 </div>
               </TableCell>
             </TableRow>

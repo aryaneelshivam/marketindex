@@ -18,11 +18,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
-  const [sector, setSector] = useState("most_active");
   const [emaFilter, setEmaFilter] = useState("ALL");
   const [smaFilter, setSmaFilter] = useState("ALL");
   const [macdFilter, setMacdFilter] = useState("ALL");
@@ -32,7 +30,7 @@ const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   
-  const { data: rawData, isLoading, error } = useStockData(period, sector);
+  const { data: rawData, isLoading, error } = useStockData(period);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -98,6 +96,7 @@ const Index = () => {
     return matchesSearch && matchesEma && matchesSma && matchesMacd && matchesRsi && matchesStoch;
   });
 
+  // Limit data based on authentication status
   const displayData = !isAuthenticated 
     ? filteredData?.slice(0, 20) 
     : filteredData;
@@ -121,35 +120,6 @@ const Index = () => {
               Technical analysis indicator screener for Nifty50 and most active equities 
             </p>
           </div>
-
-          <Tabs defaultValue="most_active" onValueChange={(value) => setSector(value)} className="w-full">
-            <TabsList className="w-full justify-start">
-              <TabsTrigger value="most_active" className="flex items-center gap-2">
-                Most Active Equities 🔥
-              </TabsTrigger>
-              <TabsTrigger value="financial" className="flex items-center gap-2">
-                Financial Sector 💸
-              </TabsTrigger>
-              <TabsTrigger value="energy" className="flex items-center gap-2">
-                Energy Sector ♻️
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="most_active">
-              <div className="text-sm text-muted-foreground mb-4">
-                View analysis for the most actively traded stocks in the market
-              </div>
-            </TabsContent>
-            <TabsContent value="financial">
-              <div className="text-sm text-muted-foreground mb-4">
-                View analysis for stocks in the financial sector
-              </div>
-            </TabsContent>
-            <TabsContent value="energy">
-              <div className="text-sm text-muted-foreground mb-4">
-                View analysis for stocks in the energy sector
-              </div>
-            </TabsContent>
-          </Tabs>
 
           <div className="flex justify-between items-center gap-4">
             <TooltipProvider>
