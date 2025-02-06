@@ -17,13 +17,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -130,16 +123,24 @@ const Index = () => {
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="w-full md:w-auto">
-              <Select value={sector} onValueChange={(value) => setSector(value as Sector)}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select sector" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="most_active">Most Active Equities 🔥</SelectItem>
-                  <SelectItem value="financial">Financial Sector 💸</SelectItem>
-                  <SelectItem value="energy">Energy Sector ♻️</SelectItem>
-                </SelectContent>
-              </Select>
+              <RadioGroup
+                value={sector}
+                onValueChange={(value) => setSector(value as Sector)}
+                className="flex flex-wrap gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="most_active" id="most_active" />
+                  <Label htmlFor="most_active" className="cursor-pointer">Most Active Equities 🔥</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="financial" id="financial" />
+                  <Label htmlFor="financial" className="cursor-pointer">Financial Sector 💸</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="energy" id="energy" />
+                  <Label htmlFor="energy" className="cursor-pointer">Energy Sector ♻️</Label>
+                </div>
+              </RadioGroup>
             </div>
 
             <div className="flex items-center gap-4 w-full md:w-auto">
