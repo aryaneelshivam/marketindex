@@ -114,7 +114,7 @@ const Index = () => {
       <div className="flex-1 p-4 md:p-8">
         <div className="mx-auto max-w-[1400px] space-y-6">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">Market Analysis</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Monitor equities across sectors</h1>
             <p className="text-muted-foreground">
               Technical analysis indicator screener for Indian equities
             </p>
