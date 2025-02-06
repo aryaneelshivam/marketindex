@@ -1,4 +1,4 @@
-import { useStockData } from "@/hooks/use-stock-data";
+import { useStockData, type Sector } from "@/hooks/use-stock-data";
 import { StockTable } from "@/components/StockTable";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -11,16 +11,23 @@ import { Search, Lock, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
 import { Button } from "@/components/ui/button";
-import { StockDetails } from "@/components/StockDetails";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
+  const [sector, setSector] = useState<Sector>("most_active");
   const [emaFilter, setEmaFilter] = useState("ALL");
   const [smaFilter, setSmaFilter] = useState("ALL");
   const [macdFilter, setMacdFilter] = useState("ALL");
@@ -30,7 +37,7 @@ const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   
-  const { data: rawData, isLoading, error } = useStockData(period);
+  const { data: rawData, isLoading, error } = useStockData(period, sector);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -74,7 +81,7 @@ const Index = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `stock-analysis-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `stock-analysis-${sector}-${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -117,59 +124,74 @@ const Index = () => {
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Market Analysis</h1>
             <p className="text-muted-foreground">
-              Technical analysis indicator screener for Nifty50 and most active equities 
+              Technical analysis indicator screener for Indian equities
             </p>
           </div>
 
-          <div className="flex justify-between items-center gap-4">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="relative w-full max-w-sm">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search stocks..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9"
-                      disabled={!isAuthenticated}
-                    />
-                    {!isAuthenticated && (
-                      <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                    )}
-                  </div>
-                </TooltipTrigger>
-                {!isAuthenticated && (
-                  <TooltipContent>
-                    <p>Sign in to search stocks</p>
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </TooltipProvider>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="w-full md:w-auto">
+              <Select value={sector} onValueChange={(value) => setSector(value as Sector)}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select sector" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="most_active">Most Active</SelectItem>
+                  <SelectItem value="financial">Financial</SelectItem>
+                  <SelectItem value="energy">Energy</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={handleDownloadAnalysis}
-                    className="whitespace-nowrap"
-                    disabled={!isAuthenticated}
-                  >
-                    {isAuthenticated ? (
-                      <Download className="w-4 h-4 mr-2" />
-                    ) : (
-                      <Lock className="w-4 h-4 mr-2" />
-                    )}
-                    Download Analysis
-                  </Button>
-                </TooltipTrigger>
-                {!isAuthenticated && (
-                  <TooltipContent>
-                    <p>Sign in to download analysis data</p>
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </TooltipProvider>
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="relative w-full max-w-sm">
+                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search stocks..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9"
+                        disabled={!isAuthenticated}
+                      />
+                      {!isAuthenticated && (
+                        <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
+                  </TooltipTrigger>
+                  {!isAuthenticated && (
+                    <TooltipContent>
+                      <p>Sign in to search stocks</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={handleDownloadAnalysis}
+                      className="whitespace-nowrap"
+                      disabled={!isAuthenticated}
+                    >
+                      {isAuthenticated ? (
+                        <Download className="w-4 h-4 mr-2" />
+                      ) : (
+                        <Lock className="w-4 h-4 mr-2" />
+                      )}
+                      Download Analysis
+                    </Button>
+                  </TooltipTrigger>
+                  {!isAuthenticated && (
+                    <TooltipContent>
+                      <p>Sign in to download analysis data</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -315,6 +337,7 @@ const Index = () => {
                 </RadioGroup>
               </div>
             </div>
+
           </div>
 
           {isLoading ? (
