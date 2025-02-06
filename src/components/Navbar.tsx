@@ -132,7 +132,7 @@ export const Navbar = () => {
       </nav>
       <div className="w-full bg-black text-white py-2 px-4 flex items-center justify-center">
         <p className="text-sm">
-          🎉 marketindex v1.0.0 has launched! Developed by Aryaneel Shivam
+          🚀 marketindex v2.0.0 has launched! Developed by Aryaneel Shivam
         </p>
       </div>
     </>
