@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { ExternalLink, Globe, Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Sheet,
   SheetContent,
@@ -13,6 +14,27 @@ import {
 export const Navbar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+    };
+    
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
 
   const NavButtons = () => (
     <div className="flex flex-col gap-4 md:flex-row">
@@ -31,26 +53,38 @@ export const Navbar = () => {
           <ExternalLink className="h-4 w-4" />
         </a>
       </Button>
-      <Button
-        variant="default"
-        size="sm"
-        onClick={() => {
-          navigate("/auth?mode=signup");
-          setIsOpen(false);
-        }}
-      >
-        Sign Up
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
-          navigate("/auth?mode=signin");
-          setIsOpen(false);
-        }}
-      >
-        Sign In
-      </Button>
+      {isAuthenticated ? (
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={handleLogout}
+        >
+          Log Out
+        </Button>
+      ) : (
+        <>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => {
+              navigate("/auth?mode=signup");
+              setIsOpen(false);
+            }}
+          >
+            Sign Up
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              navigate("/auth?mode=signin");
+              setIsOpen(false);
+            }}
+          >
+            Sign In
+          </Button>
+        </>
+      )}
     </div>
   );
 

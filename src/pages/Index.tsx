@@ -135,9 +135,9 @@ const Index = () => {
                   <SelectValue placeholder="Select sector" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="most_active">Most Active</SelectItem>
-                  <SelectItem value="financial">Financial</SelectItem>
-                  <SelectItem value="energy">Energy</SelectItem>
+                  <SelectItem value="most_active">Most Active Equities 🔥</SelectItem>
+                  <SelectItem value="financial">Financial Sector 💸</SelectItem>
+                  <SelectItem value="energy">Energy Sector ♻️</SelectItem>
                 </SelectContent>
               </Select>
             </div>
