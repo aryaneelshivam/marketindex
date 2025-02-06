@@ -29,8 +29,8 @@ interface StockData {
   "MACD Crossover": string;
   "Volume Divergence": string;
   "ADX Strength": string;
-  RSI: RSIData;
-  Stochastic: StochasticData;
+  RSI?: RSIData;
+  Stochastic?: StochasticData;
 }
 
 interface StockTableProps {
