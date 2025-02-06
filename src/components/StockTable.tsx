@@ -185,11 +185,11 @@ export const StockTable = ({ period, sector }: StockTableProps) => {
                 <TableCell>
                   <div className="flex flex-col gap-1">
                     <div className={`text-sm font-medium ${getStochColor(
-                      stock.Stochastic?.K_Value,
-                      stock.Stochastic?.D_Value
+                      stock.Stochastic?.k_value,
+                      stock.Stochastic?.d_value
                     )}`}>
-                      <div>K: {stock.Stochastic?.K_Value?.toFixed(2) ?? 'N/A'}</div>
-                      <div>D: {stock.Stochastic?.D_Value?.toFixed(2) ?? 'N/A'}</div>
+                      <div>K: {stock.Stochastic?.k_value?.toFixed(2) ?? 'N/A'}</div>
+                      <div>D: {stock.Stochastic?.d_value?.toFixed(2) ?? 'N/A'}</div>
                     </div>
                     {stock.Stochastic?.Condition && (
                       <Signal 
