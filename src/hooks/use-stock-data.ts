@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 
 interface RSIData {
-  Value: number;
-  Condition: string;
+  Value?: number;
+  Condition?: string;
 }
 
 interface StochasticData {
-  K_Value: number;
-  D_Value: number;
-  Condition: string;
+  K_Value?: number;
+  D_Value?: number;
+  Condition?: string;
 }
 
 interface StockData {
@@ -18,13 +18,13 @@ interface StockData {
   "MACD Crossover": string;
   "Volume Divergence": string;
   "ADX Strength": string;
-  RSI: RSIData;
-  Stochastic: StochasticData;
+  RSI?: RSIData;
+  Stochastic?: StochasticData;
 }
 
-const fetchStockData = async (period: string): Promise<StockData[]> => {
+const fetchStockData = async (period: string, sector: string): Promise<StockData[]> => {
   const response = await fetch(
-    `https://market-index.onrender.com/analyze_stocks?period=${period}`
+    `https://market-index.onrender.com/analyze_stocks?sector=${sector}&period=${period}`
   );
   if (!response.ok) {
     throw new Error("Failed to fetch stock data");
@@ -32,10 +32,10 @@ const fetchStockData = async (period: string): Promise<StockData[]> => {
   return response.json();
 };
 
-export const useStockData = (period: string) => {
+export const useStockData = (period: string, sector: string) => {
   return useQuery({
-    queryKey: ["stockData", period],
-    queryFn: () => fetchStockData(period),
+    queryKey: ["stockData", period, sector],
+    queryFn: () => fetchStockData(period, sector),
     refetchInterval: 300000, // Refetch every 5 minutes
   });
 };
