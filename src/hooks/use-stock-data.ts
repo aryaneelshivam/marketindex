@@ -22,9 +22,9 @@ interface StockData {
   Stochastic: StochasticData;
 }
 
-const fetchStockData = async (period: string): Promise<StockData[]> => {
+const fetchStockData = async (period: string, sector: string): Promise<StockData[]> => {
   const response = await fetch(
-    `https://market-index.onrender.com/analyze_stocks?period=${period}`
+    `https://market-index.onrender.com/analyze_stocks?sector=${sector}&period=${period}`
   );
   if (!response.ok) {
     throw new Error("Failed to fetch stock data");
@@ -32,10 +32,10 @@ const fetchStockData = async (period: string): Promise<StockData[]> => {
   return response.json();
 };
 
-export const useStockData = (period: string) => {
+export const useStockData = (period: string, sector: string) => {
   return useQuery({
-    queryKey: ["stockData", period],
-    queryFn: () => fetchStockData(period),
+    queryKey: ["stockData", period, sector],
+    queryFn: () => fetchStockData(period, sector),
     refetchInterval: 300000, // Refetch every 5 minutes
   });
 };
