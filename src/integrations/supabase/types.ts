@@ -99,12 +99,39 @@ export type Database = {
         }
         Relationships: []
       }
+      stock_votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          stock_symbol: string
+          user_id: string
+          vote_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          stock_symbol: string
+          user_id: string
+          vote_type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          stock_symbol?: string
+          user_id?: string
+          vote_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      reset_daily_votes: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

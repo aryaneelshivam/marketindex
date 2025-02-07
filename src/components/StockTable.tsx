@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -7,9 +8,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Signal } from "./Signal";
-import { TrendingDown, TrendingUp } from "lucide-react";
-import { useState } from "react";
+import { ArrowBigUp, ArrowBigDown, TrendingDown, TrendingUp } from "lucide-react";
+import { useState, useEffect } from "react";
 import { StockDetails } from "./StockDetails";
+import { Button } from "./ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface RSIData {
   Value: number;
@@ -33,12 +37,155 @@ interface StockData {
   Stochastic: StochasticData;
 }
 
+interface VoteCount {
+  bullish: number;
+  bearish: number;
+}
+
+interface VoteData {
+  [key: string]: VoteCount;
+}
+
 interface StockTableProps {
   data: StockData[];
 }
 
 export const StockTable = ({ data }: StockTableProps) => {
   const [selectedStock, setSelectedStock] = useState<string | null>(data[0]?.Symbol || null);
+  const [voteCounts, setVoteCounts] = useState<VoteData>({});
+  const [userVotes, setUserVotes] = useState<{[key: string]: string}>({});
+  const { toast } = useToast();
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!session) return;
+
+    // Fetch vote counts for all stocks
+    const fetchVoteCounts = async () => {
+      const { data: votes, error } = await supabase
+        .from('stock_votes')
+        .select('stock_symbol, vote_type');
+
+      if (error) {
+        console.error('Error fetching votes:', error);
+        return;
+      }
+
+      const counts: VoteData = {};
+      votes.forEach((vote) => {
+        if (!counts[vote.stock_symbol]) {
+          counts[vote.stock_symbol] = { bullish: 0, bearish: 0 };
+        }
+        counts[vote.stock_symbol][vote.vote_type as 'bullish' | 'bearish']++;
+      });
+      setVoteCounts(counts);
+    };
+
+    // Fetch user's own votes
+    const fetchUserVotes = async () => {
+      const { data: userVoteData, error } = await supabase
+        .from('stock_votes')
+        .select('stock_symbol, vote_type')
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        console.error('Error fetching user votes:', error);
+        return;
+      }
+
+      const votes: {[key: string]: string} = {};
+      userVoteData.forEach((vote) => {
+        votes[vote.stock_symbol] = vote.vote_type;
+      });
+      setUserVotes(votes);
+    };
+
+    fetchVoteCounts();
+    fetchUserVotes();
+
+    // Subscribe to realtime changes
+    const channel = supabase
+      .channel('stock-votes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'stock_votes' },
+        () => {
+          fetchVoteCounts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [session]);
+
+  const handleVote = async (symbol: string, voteType: 'bullish' | 'bearish') => {
+    if (!session) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to vote on stocks",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      if (userVotes[symbol] === voteType) {
+        // Remove vote if clicking the same button
+        const { error } = await supabase
+          .from('stock_votes')
+          .delete()
+          .eq('user_id', session.user.id)
+          .eq('stock_symbol', symbol);
+
+        if (error) throw error;
+        
+        const newUserVotes = { ...userVotes };
+        delete newUserVotes[symbol];
+        setUserVotes(newUserVotes);
+      } else {
+        // Upsert vote
+        const { error } = await supabase
+          .from('stock_votes')
+          .upsert({
+            user_id: session.user.id,
+            stock_symbol: symbol,
+            vote_type: voteType
+          }, {
+            onConflict: 'stock_symbol,user_id'
+          });
+
+        if (error) throw error;
+        
+        setUserVotes({ ...userVotes, [symbol]: voteType });
+      }
+
+      toast({
+        title: "Vote recorded",
+        description: `Your ${voteType} vote for ${symbol} has been recorded`,
+      });
+    } catch (error) {
+      console.error('Error voting:', error);
+      toast({
+        title: "Error",
+        description: "Failed to record your vote. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
     if (emaSignal === "BUY" && smaSignal === "BUY") {
@@ -92,6 +239,7 @@ export const StockTable = ({ data }: StockTableProps) => {
             <TableHead className="font-semibold">ADX Strength</TableHead>
             <TableHead className="font-semibold">RSI</TableHead>
             <TableHead className="font-semibold">Stochastic</TableHead>
+            <TableHead className="font-semibold">Sentiment</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -161,6 +309,30 @@ export const StockTable = ({ data }: StockTableProps) => {
                     signal={stock.Stochastic.Condition} 
                     className={`w-fit ${getNeutralPillColor(stock.Stochastic.Condition)}`}
                   />
+                </div>
+              </TableCell>
+              <TableCell onClick={(e) => e.stopPropagation()}>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant={userVotes[stock.Symbol] === 'bullish' ? 'default' : 'outline'}
+                      className="flex items-center gap-1"
+                      onClick={() => handleVote(stock.Symbol, 'bullish')}
+                    >
+                      <ArrowBigUp className="w-4 h-4" />
+                      {voteCounts[stock.Symbol]?.bullish || 0}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={userVotes[stock.Symbol] === 'bearish' ? 'default' : 'outline'}
+                      className="flex items-center gap-1"
+                      onClick={() => handleVote(stock.Symbol, 'bearish')}
+                    >
+                      <ArrowBigDown className="w-4 h-4" />
+                      {voteCounts[stock.Symbol]?.bearish || 0}
+                    </Button>
+                  </div>
                 </div>
               </TableCell>
             </TableRow>
