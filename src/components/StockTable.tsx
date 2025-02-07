@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Signal } from "./Signal";
-import { ArrowBigUp, ArrowBigDown, TrendingDown, TrendingUp } from "lucide-react";
+import { ThumbsUp, ThumbsDown, TrendingDown, TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import { StockDetails } from "./StockDetails";
 import { Button } from "./ui/button";
@@ -239,7 +239,7 @@ export const StockTable = ({ data }: StockTableProps) => {
             <TableHead className="font-semibold">ADX Strength</TableHead>
             <TableHead className="font-semibold">RSI</TableHead>
             <TableHead className="font-semibold">Stochastic</TableHead>
-            <TableHead className="font-semibold">Sentiment</TableHead>
+            <TableHead className="font-semibold">Like 👍</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -320,7 +320,7 @@ export const StockTable = ({ data }: StockTableProps) => {
                       className="flex items-center gap-1"
                       onClick={() => handleVote(stock.Symbol, 'bullish')}
                     >
-                      <ArrowBigUp className="w-4 h-4" />
+                      <ThumbsUp className="w-4 h-4" />
                       {voteCounts[stock.Symbol]?.bullish || 0}
                     </Button>
                     <Button
@@ -329,7 +329,7 @@ export const StockTable = ({ data }: StockTableProps) => {
                       className="flex items-center gap-1"
                       onClick={() => handleVote(stock.Symbol, 'bearish')}
                     >
-                      <ArrowBigDown className="w-4 h-4" />
+                      <ThumbsDown className="w-4 h-4" />
                       {voteCounts[stock.Symbol]?.bearish || 0}
                     </Button>
                   </div>
