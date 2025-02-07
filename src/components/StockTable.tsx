@@ -239,7 +239,7 @@ export const StockTable = ({ data }: StockTableProps) => {
             <TableHead className="font-semibold">ADX Strength</TableHead>
             <TableHead className="font-semibold">RSI</TableHead>
             <TableHead className="font-semibold">Stochastic</TableHead>
-            <TableHead className="font-semibold">Like 👍</TableHead>
+            <TableHead className="font-semibold">Analysis rating</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
