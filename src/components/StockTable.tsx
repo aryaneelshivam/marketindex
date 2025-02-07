@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -8,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Signal } from "./Signal";
-import { ThumbsUp, ThumbsDown, TrendingDown, TrendingUp } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import { StockDetails } from "./StockDetails";
 import { Button } from "./ui/button";
@@ -72,7 +71,6 @@ export const StockTable = ({ data }: StockTableProps) => {
   useEffect(() => {
     if (!session) return;
 
-    // Fetch vote counts for all stocks
     const fetchVoteCounts = async () => {
       const { data: votes, error } = await supabase
         .from('stock_votes')
@@ -93,7 +91,6 @@ export const StockTable = ({ data }: StockTableProps) => {
       setVoteCounts(counts);
     };
 
-    // Fetch user's own votes
     const fetchUserVotes = async () => {
       const { data: userVoteData, error } = await supabase
         .from('stock_votes')
@@ -115,7 +112,6 @@ export const StockTable = ({ data }: StockTableProps) => {
     fetchVoteCounts();
     fetchUserVotes();
 
-    // Subscribe to realtime changes
     const channel = supabase
       .channel('stock-votes')
       .on(
@@ -144,7 +140,6 @@ export const StockTable = ({ data }: StockTableProps) => {
 
     try {
       if (userVotes[symbol] === voteType) {
-        // Remove vote if clicking the same button
         const { error } = await supabase
           .from('stock_votes')
           .delete()
@@ -157,7 +152,6 @@ export const StockTable = ({ data }: StockTableProps) => {
         delete newUserVotes[symbol];
         setUserVotes(newUserVotes);
       } else {
-        // Upsert vote
         const { error } = await supabase
           .from('stock_votes')
           .upsert({
@@ -317,20 +311,18 @@ export const StockTable = ({ data }: StockTableProps) => {
                     <Button
                       size="sm"
                       variant={userVotes[stock.Symbol] === 'bullish' ? 'default' : 'outline'}
-                      className="flex items-center gap-1"
+                      className={`flex items-center gap-1 ${userVotes[stock.Symbol] === 'bullish' ? 'bg-green-500 hover:bg-green-600' : ''}`}
                       onClick={() => handleVote(stock.Symbol, 'bullish')}
                     >
-                      <ThumbsUp className="w-4 h-4" />
-                      {voteCounts[stock.Symbol]?.bullish || 0}
+                      👍 {voteCounts[stock.Symbol]?.bullish || 0}
                     </Button>
                     <Button
                       size="sm"
                       variant={userVotes[stock.Symbol] === 'bearish' ? 'default' : 'outline'}
-                      className="flex items-center gap-1"
+                      className={`flex items-center gap-1 ${userVotes[stock.Symbol] === 'bearish' ? 'bg-red-500 hover:bg-red-600' : ''}`}
                       onClick={() => handleVote(stock.Symbol, 'bearish')}
                     >
-                      <ThumbsDown className="w-4 h-4" />
-                      {voteCounts[stock.Symbol]?.bearish || 0}
+                      👎 {voteCounts[stock.Symbol]?.bearish || 0}
                     </Button>
                   </div>
                 </div>
