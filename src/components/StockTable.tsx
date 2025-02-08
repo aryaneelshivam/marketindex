@@ -31,15 +31,6 @@ interface StockData {
   Stochastic: StochasticData;
 }
 
-interface VoteCount {
-  bullish: number;
-  bearish: number;
-}
-
-interface VoteData {
-  [key: string]: VoteCount;
-}
-
 interface StockTableProps {
   data: StockData[];
   onStockSelect?: (symbol: string) => void;  // Added this prop definition
@@ -47,8 +38,6 @@ interface StockTableProps {
 
 export const StockTable = ({ data, onStockSelect }: StockTableProps) => {
   const [selectedStock, setSelectedStock] = useState<string | null>(data[0]?.Symbol || null);
-  const [voteCounts, setVoteCounts] = useState<VoteData>({});
-  const [userVotes, setUserVotes] = useState<{[key: string]: string}>({});
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
@@ -62,66 +51,6 @@ export const StockTable = ({ data, onStockSelect }: StockTableProps) => {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  useEffect(() => {
-    if (!session) return;
-
-    const fetchVoteCounts = async () => {
-      const { data: votes, error } = await supabase
-        .from('stock_votes')
-        .select('stock_symbol, vote_type');
-
-      if (error) {
-        console.error('Error fetching votes:', error);
-        return;
-      }
-
-      const counts: VoteData = {};
-      votes.forEach((vote) => {
-        if (!counts[vote.stock_symbol]) {
-          counts[vote.stock_symbol] = { bullish: 0, bearish: 0 };
-        }
-        counts[vote.stock_symbol][vote.vote_type as 'bullish' | 'bearish']++;
-      });
-      setVoteCounts(counts);
-    };
-
-    const fetchUserVotes = async () => {
-      const { data: userVoteData, error } = await supabase
-        .from('stock_votes')
-        .select('stock_symbol, vote_type')
-        .eq('user_id', session.user.id);
-
-      if (error) {
-        console.error('Error fetching user votes:', error);
-        return;
-      }
-
-      const votes: {[key: string]: string} = {};
-      userVoteData.forEach((vote) => {
-        votes[vote.stock_symbol] = vote.vote_type;
-      });
-      setUserVotes(votes);
-    };
-
-    fetchVoteCounts();
-    fetchUserVotes();
-
-    const channel = supabase
-      .channel('stock-votes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'stock_votes' },
-        () => {
-          fetchVoteCounts();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [session]);
 
   const handleStockSelect = (symbol: string) => {
     setSelectedStock(symbol);
@@ -139,8 +68,6 @@ export const StockTable = ({ data, onStockSelect }: StockTableProps) => {
               stock={stock}
               index={index}
               isSelected={selectedStock === stock.Symbol}
-              userVote={userVotes[stock.Symbol]}
-              votes={voteCounts[stock.Symbol] || { bullish: 0, bearish: 0 }}
               onSelect={() => handleStockSelect(stock.Symbol)}
             />
           ))}

@@ -61,6 +61,12 @@ export const StockTableRow = ({
     return "";
   };
 
+  const getRSIClass = (value: number) => {
+    if (value >= 70) return "text-red-500";
+    if (value <= 30) return "text-green-500";
+    return "text-muted-foreground";
+  };
+
   return (
     <TableRow
       className={`group transition-all duration-200 cursor-pointer backdrop-blur-sm border-b border-border/40 hover:bg-muted/30 ${
@@ -117,6 +123,29 @@ export const StockTableRow = ({
           signal={stock["ADX Strength"]} 
           className={getNeutralPillColor(stock["ADX Strength"])}
         />
+      </TableCell>
+      <TableCell>
+        <div className="flex flex-col">
+          <span className={`text-sm font-medium ${getRSIClass(stock.RSI.Value)}`}>
+            {stock.RSI.Value.toFixed(2)}
+          </span>
+          <Signal 
+            signal={stock.RSI.Condition} 
+            className={getNeutralPillColor(stock.RSI.Condition)}
+          />
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className="flex flex-col">
+          <div className="flex gap-1 text-xs text-muted-foreground">
+            <span>K: {stock.Stochastic.k_value.toFixed(2)}</span>
+            <span>D: {stock.Stochastic.d_value.toFixed(2)}</span>
+          </div>
+          <Signal 
+            signal={stock.Stochastic.Condition} 
+            className={getNeutralPillColor(stock.Stochastic.Condition)}
+          />
+        </div>
       </TableCell>
     </TableRow>
   );

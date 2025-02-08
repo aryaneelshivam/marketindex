@@ -36,8 +36,13 @@ export const StockTableHeader = () => {
         <TableHead className="font-medium text-muted-foreground">
           ADX
         </TableHead>
+        <TableHead className="font-medium text-muted-foreground">
+          RSI
+        </TableHead>
+        <TableHead className="font-medium text-muted-foreground">
+          Stochastic
+        </TableHead>
       </TableRow>
     </TableHeader>
   );
 };
-
