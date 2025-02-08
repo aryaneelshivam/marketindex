@@ -2,6 +2,8 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Signal } from "@/components/Signal";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { useStockPrice } from "@/hooks/use-stock-data";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface StockTableRowProps {
   stock: {
@@ -32,6 +34,8 @@ export const StockTableRow = ({
   isSelected, 
   onSelect 
 }: StockTableRowProps) => {
+  const { data: priceData, isLoading } = useStockPrice(stock.Symbol);
+
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
     if (emaSignal === "BUY" && smaSignal === "BUY") {
       return "bg-green-950/10 backdrop-blur-sm";
@@ -77,10 +81,18 @@ export const StockTableRow = ({
         </div>
       </TableCell>
       <TableCell className="font-medium">
-        ₹{(Math.random() * 1000 + 100).toFixed(2)}
+        {isLoading ? (
+          <Skeleton className="h-4 w-20" />
+        ) : (
+          `₹${priceData?.currentPrice}`
+        )}
       </TableCell>
-      <TableCell className={`font-medium ${Math.random() > 0.5 ? 'text-red-500' : 'text-green-500'}`}>
-        {(Math.random() * 2 - 1).toFixed(2)}%
+      <TableCell className={`font-medium ${priceData?.change && priceData.change < 0 ? 'text-red-500' : 'text-green-500'}`}>
+        {isLoading ? (
+          <Skeleton className="h-4 w-16" />
+        ) : (
+          `${priceData?.change?.toFixed(2)}%`
+        )}
       </TableCell>
       <TableCell>
         <Signal signal={stock["Last EMA Signal"]} />
