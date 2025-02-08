@@ -92,8 +92,8 @@ export const StockTableRow = ({
   };
 
   const getADXSignal = (strength: string) => {
-    if (strength === "STRONG") return "BUY";
-    if (strength === "WEAK") return "SELL";
+    if (strength === "STRONG") return "STRONG";
+    if (strength === "WEAK") return "WEAK";
     return "NEUTRAL";
   };
 
