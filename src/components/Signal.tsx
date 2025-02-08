@@ -33,7 +33,7 @@ export const Signal = ({ signal, className }: SignalProps) => {
     }
 
     // Neutral signals (including NEUTRAL explicitly)
-    return "bg-[#FEC6A1]/10 text-[#FEC6A1] border-[#FEC6A1]/50";
+    return "bg-zinc-500/10 text-zinc-400 border-zinc-500/30";
   };
 
   return (
