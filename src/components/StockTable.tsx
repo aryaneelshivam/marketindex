@@ -51,7 +51,7 @@ export const StockTable = ({ data }: StockTableProps) => {
   }, []);
 
   return (
-    <div className="rounded-lg border border-border/40 overflow-x-auto bg-card/30 backdrop-blur-sm shadow-lg">
+    <div className="rounded-lg border border-border/40 overflow-x-auto bg-background shadow-lg">
       <Table>
         <StockTableHeader />
         <TableBody>
