@@ -4,7 +4,6 @@ import { Signal } from "@/components/Signal";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useStockPrice } from "@/hooks/use-stock-data";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MiniChart } from "./MiniChart";
 
 interface StockTableRowProps {
   stock: {
@@ -47,14 +46,39 @@ export const StockTableRow = ({
     return "";
   };
 
-  const getTrendIcon = (emaSignal: string, smaSignal: string) => {
-    if (emaSignal === "BUY" && smaSignal === "BUY") {
-      return <TrendingUp className="w-4 h-4 text-signal-buy ml-2" />;
+  const getTrendIcon = (stock: StockTableRowProps['stock']) => {
+    // Count buy signals
+    let buySignals = 0;
+    let totalSignals = 0;
+
+    // Check EMA Signal
+    if (stock["Last EMA Signal"] === "BUY") buySignals++;
+    if (stock["Last EMA Signal"] !== "NEUTRAL") totalSignals++;
+
+    // Check SMA Signal
+    if (stock["Last SMA Signal"] === "BUY") buySignals++;
+    if (stock["Last SMA Signal"] !== "NEUTRAL") totalSignals++;
+
+    // Check MACD
+    if (stock["MACD Crossover"] === "YES") buySignals++;
+    if (stock["MACD Crossover"] !== "NEUTRAL") totalSignals++;
+
+    // Check RSI
+    if (stock.RSI.Condition === "BUY") buySignals++;
+    if (stock.RSI.Condition !== "NEUTRAL") totalSignals++;
+
+    // Check Stochastic
+    if (stock.Stochastic.Condition === "BUY") buySignals++;
+    if (stock.Stochastic.Condition !== "NEUTRAL") totalSignals++;
+
+    // Calculate if majority are buy signals
+    const isMajorityBuy = buySignals > totalSignals / 2;
+
+    if (totalSignals === 0) return null;
+    if (isMajorityBuy) {
+      return <TrendingUp className="w-6 h-6 text-signal-buy" />;
     }
-    if (emaSignal === "SELL" && smaSignal === "SELL") {
-      return <TrendingDown className="w-4 h-4 text-signal-sell ml-2" />;
-    }
-    return null;
+    return <TrendingDown className="w-6 h-6 text-signal-sell" />;
   };
 
   const getNeutralPillColor = (signal: string) => {
@@ -102,7 +126,7 @@ export const StockTableRow = ({
         )}
       </TableCell>
       <TableCell>
-        <MiniChart symbol={stock.Symbol} currentPrice={parseFloat(priceData?.currentPrice || "0")} />
+        {getTrendIcon(stock)}
       </TableCell>
       <TableCell>
         <Signal signal={stock["Last EMA Signal"]} />
@@ -154,3 +178,4 @@ export const StockTableRow = ({
     </TableRow>
   );
 };
+
