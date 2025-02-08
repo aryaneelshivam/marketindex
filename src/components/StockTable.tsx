@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -183,10 +184,10 @@ export const StockTable = ({ data }: StockTableProps) => {
 
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
     if (emaSignal === "BUY" && smaSignal === "BUY") {
-      return "bg-green-950/30";
+      return "bg-green-950/20 backdrop-blur-sm";
     }
     if (emaSignal === "SELL" && smaSignal === "SELL") {
-      return "bg-red-950/30";
+      return "bg-red-950/20 backdrop-blur-sm";
     }
     return "";
   };
@@ -220,38 +221,38 @@ export const StockTable = ({ data }: StockTableProps) => {
   };
 
   return (
-    <div className="rounded-md border border-border overflow-x-auto bg-card">
+    <div className="rounded-lg border border-border/40 overflow-x-auto bg-card/30 backdrop-blur-sm shadow-lg">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/50 hover:bg-muted/50">
-            <TableHead className="w-[80px] font-semibold text-foreground">
+          <TableRow className="bg-background/50 hover:bg-background/50 backdrop-blur-md border-b border-border/40">
+            <TableHead className="w-[80px] font-semibold text-foreground/80">
               #
             </TableHead>
-            <TableHead className="w-[120px] font-semibold text-foreground">
+            <TableHead className="w-[120px] font-semibold text-foreground/80">
               Symbol
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="font-semibold text-foreground/80">
               EMA Signal
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="font-semibold text-foreground/80">
               SMA Signal
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="font-semibold text-foreground/80">
               MACD Crossover
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="font-semibold text-foreground/80">
               Volume Divergence
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="font-semibold text-foreground/80">
               ADX Strength
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="font-semibold text-foreground/80">
               RSI
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="font-semibold text-foreground/80">
               Stochastic
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="font-semibold text-foreground/80">
               Analysis rating
             </TableHead>
           </TableRow>
@@ -260,7 +261,7 @@ export const StockTable = ({ data }: StockTableProps) => {
           {data.map((stock, index) => (
             <TableRow
               key={stock.Symbol}
-              className={`hover:bg-muted/50 transition-colors cursor-pointer ${
+              className={`hover:bg-muted/30 transition-all duration-200 cursor-pointer backdrop-blur-sm ${
                 selectedStock === stock.Symbol ? "bg-muted/50" : ""
               } ${getRowBackgroundColor(
                 stock["Last EMA Signal"],
@@ -271,7 +272,7 @@ export const StockTable = ({ data }: StockTableProps) => {
               <TableCell className="font-medium text-muted-foreground">
                 {index + 1}
               </TableCell>
-              <TableCell className="font-medium text-foreground flex items-center">
+              <TableCell className="font-medium text-foreground/90 flex items-center">
                 {stock.Symbol}
                 {getTrendIcon(stock["Last EMA Signal"], stock["Last SMA Signal"])}
               </TableCell>
@@ -331,7 +332,7 @@ export const StockTable = ({ data }: StockTableProps) => {
                     <Button
                       size="sm"
                       variant={userVotes[stock.Symbol] === 'bullish' ? 'default' : 'outline'}
-                      className={`flex items-center gap-1 ${userVotes[stock.Symbol] === 'bullish' ? 'bg-green-500 hover:bg-green-600' : ''}`}
+                      className={`flex items-center gap-1 transition-all duration-200 ${userVotes[stock.Symbol] === 'bullish' ? 'bg-green-500 hover:bg-green-600' : ''}`}
                       onClick={() => handleVote(stock.Symbol, 'bullish')}
                     >
                       👍 {voteCounts[stock.Symbol]?.bullish || 0}
@@ -339,7 +340,7 @@ export const StockTable = ({ data }: StockTableProps) => {
                     <Button
                       size="sm"
                       variant={userVotes[stock.Symbol] === 'bearish' ? 'default' : 'outline'}
-                      className={`flex items-center gap-1 ${userVotes[stock.Symbol] === 'bearish' ? 'bg-red-500 hover:bg-red-600' : ''}`}
+                      className={`flex items-center gap-1 transition-all duration-200 ${userVotes[stock.Symbol] === 'bearish' ? 'bg-red-500 hover:bg-red-600' : ''}`}
                       onClick={() => handleVote(stock.Symbol, 'bearish')}
                     >
                       👎 {voteCounts[stock.Symbol]?.bearish || 0}
