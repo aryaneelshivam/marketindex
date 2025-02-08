@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ThumbsUp } from "lucide-react";
 
 interface VotingButtonsProps {
   symbol: string;
@@ -15,7 +16,7 @@ interface VotingButtonsProps {
 export const VotingButtons = ({ symbol, userVote, votes }: VotingButtonsProps) => {
   const { toast } = useToast();
 
-  const handleVote = async (voteType: 'bullish' | 'bearish') => {
+  const handleVote = async (voteType: 'bullish') => {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
@@ -52,7 +53,7 @@ export const VotingButtons = ({ symbol, userVote, votes }: VotingButtonsProps) =
 
       toast({
         title: "Vote recorded",
-        description: `Your ${voteType} vote for ${symbol} has been recorded`,
+        description: `Your upvote for ${symbol} has been recorded`,
       });
     } catch (error) {
       console.error('Error voting:', error);
@@ -70,24 +71,13 @@ export const VotingButtons = ({ symbol, userVote, votes }: VotingButtonsProps) =
         <Button
           size="sm"
           variant={userVote === 'bullish' ? 'default' : 'outline'}
-          className={`flex items-center gap-1 transition-all duration-200 ${userVote === 'bullish' ? 'bg-green-500 hover:bg-green-600' : ''}`}
+          className={`flex items-center gap-1.5 transition-all duration-200 ${userVote === 'bullish' ? 'bg-green-500 hover:bg-green-600' : ''}`}
           onClick={(e) => {
             e.stopPropagation();
             handleVote('bullish');
           }}
         >
-          👍 {votes.bullish || 0}
-        </Button>
-        <Button
-          size="sm"
-          variant={userVote === 'bearish' ? 'default' : 'outline'}
-          className={`flex items-center gap-1 transition-all duration-200 ${userVote === 'bearish' ? 'bg-red-500 hover:bg-red-600' : ''}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleVote('bearish');
-          }}
-        >
-          👎 {votes.bearish || 0}
+          <ThumbsUp className="w-4 h-4" /> {votes.bullish || 0}
         </Button>
       </div>
     </div>
