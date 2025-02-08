@@ -1,3 +1,4 @@
+
 import { useStockData, type Sector } from "@/hooks/use-stock-data";
 import { StockTable } from "@/components/StockTable";
 import { useToast } from "@/hooks/use-toast";
@@ -11,7 +12,7 @@ import { Search, Lock, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
 import { Button } from "@/components/ui/button";
-import { NewsPanel } from "@/components/NewsPanel";
+import { StockDetails } from "@/components/StockDetails";
 import {
   Tooltip,
   TooltipContent,
@@ -30,6 +31,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [selectedStock, setSelectedStock] = useState<string | null>(null);
   
   const { data: rawData, isLoading, error } = useStockData(period, sector);
   const { toast } = useToast();
@@ -391,13 +393,18 @@ const Index = () => {
                 </div>
               ) : displayData ? (
                 <>
-                  <StockTable data={displayData} />
+                  <StockTable 
+                    data={displayData} 
+                    onStockSelect={(symbol) => setSelectedStock(symbol)}
+                  />
                   {!isAuthenticated && <Paywall />}
                 </>
               ) : null}
             </div>
 
-            <NewsPanel />
+            <div className="h-full">
+              <StockDetails symbol={selectedStock} />
+            </div>
           </div>
         </div>
       </div>
@@ -407,3 +414,4 @@ const Index = () => {
 };
 
 export default Index;
+
