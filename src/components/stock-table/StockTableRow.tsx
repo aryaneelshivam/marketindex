@@ -1,4 +1,3 @@
-
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Signal } from "@/components/Signal";
 import { TrendingDown, TrendingUp } from "lucide-react";
@@ -91,9 +90,9 @@ export const StockTableRow = ({
     return "text-muted-foreground";
   };
 
-  const getADXSignal = (strength: string) => {
-    if (strength === "STRONG") return "STRONG";
-    if (strength === "WEAK") return "WEAK";
+  const getADXSignal = (strength: string): "BUY" | "SELL" | "NEUTRAL" => {
+    if (strength === "STRONG") return "BUY";
+    if (strength === "WEAK") return "SELL";
     return "NEUTRAL";
   };
 
@@ -187,4 +186,3 @@ export const StockTableRow = ({
     </TableRow>
   );
 };
-
