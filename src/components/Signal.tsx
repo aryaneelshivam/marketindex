@@ -32,7 +32,12 @@ export const Signal = ({ signal, className }: SignalProps) => {
       return "bg-zinc-500/20 text-zinc-400 border-zinc-500/50";
     }
 
-    // Neutral signals (including NEUTRAL explicitly)
+    // Explicit NEUTRAL signal
+    if (signal === "NEUTRAL") {
+      return "bg-zinc-600/10 text-zinc-500 border-zinc-600/30";
+    }
+
+    // Neutral signals (fallback for any other value)
     return "bg-zinc-500/10 text-zinc-400 border-zinc-500/30";
   };
 
@@ -48,3 +53,4 @@ export const Signal = ({ signal, className }: SignalProps) => {
     </span>
   );
 };
+
