@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -198,74 +197,76 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
   }
 
   return (
-    <div className="fixed top-20 right-4 w-full max-w-[500px] max-h-[calc(100vh-100px)] overflow-y-auto bg-background/95 backdrop-blur-xl border border-border/40 rounded-xl shadow-2xl z-50 animate-in fade-in slide-in-from-right duration-300">
-      <div className="sticky top-0 bg-background/95 backdrop-blur-xl p-4 border-b border-border/40">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">{symbol}</h2>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-muted rounded-lg transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
+    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
+      <div className="fixed left-1/2 top-1/2 z-50 grid w-full max-w-[800px] max-h-[80vh] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto border bg-background p-6 shadow-lg duration-200 sm:rounded-lg animate-in fade-in-0 zoom-in-95">
+        <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-xl pb-4 border-b border-border/40">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">{symbol}</h2>
+            <button 
+              onClick={onClose}
+              className="p-2 hover:bg-muted rounded-lg transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <PriceChart symbol={symbol} />
         </div>
-        <PriceChart symbol={symbol} />
-      </div>
-      
-      <div className="p-4">
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="w-full mb-4 bg-muted/50 backdrop-blur-sm">
-            <TabsTrigger value="overview" className="flex-1">Overview 🔎</TabsTrigger>
-            <TabsTrigger value="financials" className="flex-1">Financials 💰</TabsTrigger>
-            <TabsTrigger value="peers" className="flex-1">Peers ⛓️‍💥</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="overview" className="space-y-6">
-            {isLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-[100px] w-full" />
-                <Skeleton className="h-[100px] w-full" />
-                <Skeleton className="h-[100px] w-full" />
-              </div>
-            ) : profile ? (
-              <>
-                <ProfileSection title="Financial Profile" data={profile.financial_profile} />
-                <ProfileSection title="Stock Performance" data={profile.stock_performance} />
-                <ProfileSection title="Trading Volume" data={profile.trading_volume} />
-              </>
-            ) : null}
-          </TabsContent>
-          
-          <TabsContent value="financials" className="space-y-6">
-            {isLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-[100px] w-full" />
-                <Skeleton className="h-[100px] w-full" />
-              </div>
-            ) : profile ? (
-              <>
-                <ProfileSection title="Earnings & Revenue" data={profile.earnings_and_revenue} />
-                <ProfileSection title="Cash & Debt" data={profile.cash_and_debt} />
-                <ProfileSection title="Profitability & Margins" data={profile.profitability_and_margins} />
-              </>
-            ) : null}
-          </TabsContent>
-          
-          <TabsContent value="peers" className="space-y-6">
-            {isLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-[100px] w-full" />
-                <Skeleton className="h-[100px] w-full" />
-              </div>
-            ) : profile ? (
-              <>
-                <ProfileSection title="Ownership & Shares" data={profile.ownership_and_shares} />
-                <ProfileSection title="Liquidity & Ratios" data={profile.liquidity_and_ratios} />
-                <ProfileSection title="Earnings & Forecasts" data={profile.earnings_and_forecasts} />
-              </>
-            ) : null}
-          </TabsContent>
-        </Tabs>
+        
+        <div className="space-y-4">
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="w-full mb-4 bg-muted/50 backdrop-blur-sm">
+              <TabsTrigger value="overview" className="flex-1">Overview 🔎</TabsTrigger>
+              <TabsTrigger value="financials" className="flex-1">Financials 💰</TabsTrigger>
+              <TabsTrigger value="peers" className="flex-1">Peers ⛓️‍💥</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="overview" className="space-y-6">
+              {isLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-[100px] w-full" />
+                  <Skeleton className="h-[100px] w-full" />
+                  <Skeleton className="h-[100px] w-full" />
+                </div>
+              ) : profile ? (
+                <>
+                  <ProfileSection title="Financial Profile" data={profile.financial_profile} />
+                  <ProfileSection title="Stock Performance" data={profile.stock_performance} />
+                  <ProfileSection title="Trading Volume" data={profile.trading_volume} />
+                </>
+              ) : null}
+            </TabsContent>
+            
+            <TabsContent value="financials" className="space-y-6">
+              {isLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-[100px] w-full" />
+                  <Skeleton className="h-[100px] w-full" />
+                </div>
+              ) : profile ? (
+                <>
+                  <ProfileSection title="Earnings & Revenue" data={profile.earnings_and_revenue} />
+                  <ProfileSection title="Cash & Debt" data={profile.cash_and_debt} />
+                  <ProfileSection title="Profitability & Margins" data={profile.profitability_and_margins} />
+                </>
+              ) : null}
+            </TabsContent>
+            
+            <TabsContent value="peers" className="space-y-6">
+              {isLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-[100px] w-full" />
+                  <Skeleton className="h-[100px] w-full" />
+                </div>
+              ) : profile ? (
+                <>
+                  <ProfileSection title="Ownership & Shares" data={profile.ownership_and_shares} />
+                  <ProfileSection title="Liquidity & Ratios" data={profile.liquidity_and_ratios} />
+                  <ProfileSection title="Earnings & Forecasts" data={profile.earnings_and_forecasts} />
+                </>
+              ) : null}
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
