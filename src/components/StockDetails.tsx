@@ -18,8 +18,7 @@ import {
 } from "recharts";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Info, TrendingUp, TrendingDown } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { TrendingUp, TrendingDown } from "lucide-react";
 import { formatNumber } from "@/lib/formatNumber";
 
 interface StockDetailsProps {
@@ -182,14 +181,7 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
   });
 
   if (!symbol) {
-    return (
-      <Alert className="border-black/10 bg-[#1A1F2C] text-white">
-        <Info className="h-4 w-4 text-white" />
-        <AlertDescription>
-          Click on any stock in the list to view its detailed financial information.
-        </AlertDescription>
-      </Alert>
-    );
+    return null;
   }
 
   return (
