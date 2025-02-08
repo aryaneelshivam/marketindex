@@ -92,6 +92,22 @@ export const StockTableRow = ({
     return "text-muted-foreground";
   };
 
+  const getStochasticClass = (value: number) => {
+    if (value >= 80) return "text-red-500";
+    if (value <= 20) return "text-green-500";
+    return "text-muted-foreground";
+  };
+
+  const getADXSignal = (strength: string) => {
+    return strength === "STRONG" ? "STRONG" : strength === "WEAK" ? "WEAK" : "NEUTRAL";
+  };
+
+  const getADXClass = (signal: string) => {
+    if (signal === "STRONG") return "bg-emerald-500/20 text-emerald-400 border-emerald-500/50";
+    if (signal === "WEAK") return "bg-red-500/20 text-red-400 border-red-500/50";
+    return "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100";
+  };
+
   return (
     <TableRow
       className={`group transition-all duration-200 cursor-pointer backdrop-blur-sm border-b border-border/40 hover:bg-muted/30 ${
@@ -148,8 +164,8 @@ export const StockTableRow = ({
       </TableCell>
       <TableCell>
         <Signal 
-          signal={stock["ADX Strength"]} 
-          className={getNeutralPillColor(stock["ADX Strength"])}
+          signal={getADXSignal(stock["ADX Strength"])}
+          className={getADXClass(getADXSignal(stock["ADX Strength"]))}
         />
       </TableCell>
       <TableCell>
@@ -165,9 +181,13 @@ export const StockTableRow = ({
       </TableCell>
       <TableCell>
         <div className="flex flex-col">
-          <div className="flex gap-1 text-xs text-muted-foreground">
-            <span>K: {stock.Stochastic.k_value.toFixed(2)}</span>
-            <span>D: {stock.Stochastic.d_value.toFixed(2)}</span>
+          <div className="flex gap-1 text-xs">
+            <span className={getStochasticClass(stock.Stochastic.k_value)}>
+              K: {stock.Stochastic.k_value.toFixed(2)}
+            </span>
+            <span className={getStochasticClass(stock.Stochastic.d_value)}>
+              D: {stock.Stochastic.d_value.toFixed(2)}
+            </span>
           </div>
           <Signal 
             signal={stock.Stochastic.Condition} 
