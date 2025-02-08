@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 
 interface SignalProps {
@@ -42,10 +43,10 @@ export const Signal = ({ signal, className }: SignalProps) => {
 
   const signalColor = getSignalColor(signal.toUpperCase());
 
-  // If no signal color is returned, render simple neutral text
+  // If no signal color is returned, render simple neutral text in orange
   if (!signalColor) {
     return (
-      <span className="text-xs text-muted-foreground">
+      <span className="text-xs text-orange-400">
         Neutral
       </span>
     );
