@@ -1,3 +1,4 @@
+
 import { useStockData, type Sector } from "@/hooks/use-stock-data";
 import { StockTable } from "@/components/StockTable";
 import { useToast } from "@/hooks/use-toast";
@@ -232,7 +233,7 @@ const Index = () => {
                       <p>Sign in to download analysis data</p>
                     </TooltipContent>
                   )}
-                </TooltipProvider>
+                </Tooltip>
               </TooltipProvider>
             </div>
           </div>
