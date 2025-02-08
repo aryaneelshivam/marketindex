@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 
 interface SignalProps {
@@ -24,28 +23,40 @@ export const Signal = ({ signal, className }: SignalProps) => {
       return "bg-rose-400/10 text-rose-300 border-rose-400/30";
     }
     
-    // Handle YES/NO signals as strong/weak
+    // Oversold/Overbought
+    if (signal === "OVERSOLD") {
+      return "bg-emerald-500/20 text-emerald-400 border-emerald-500/50 font-semibold";
+    }
+    if (signal === "OVERBOUGHT") {
+      return "bg-rose-500/20 text-rose-400 border-rose-500/50 font-semibold";
+    }
+
+    // YES signals as strong buy
     if (signal === "YES") {
       return "bg-emerald-500/20 text-emerald-400 border-emerald-500/50 font-semibold";
     }
-    if (signal === "NO") {
-      return "bg-zinc-500/20 text-zinc-400 border-zinc-500/50";
-    }
 
-    // Explicit NEUTRAL signal
-    if (signal === "NEUTRAL") {
-      return "bg-zinc-600/10 text-zinc-500 border-zinc-600/30";
-    }
-
-    // Neutral signals (fallback for any other value)
-    return "bg-zinc-500/10 text-zinc-400 border-zinc-500/30";
+    // Return empty string for neutral/other signals
+    return "";
   };
 
+  const signalColor = getSignalColor(signal.toUpperCase());
+
+  // If no signal color is returned, render simple neutral text
+  if (!signalColor) {
+    return (
+      <span className="text-xs text-muted-foreground">
+        Neutral
+      </span>
+    );
+  }
+
+  // Otherwise render the badge
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border backdrop-blur-sm transition-all duration-200 hover:scale-105",
-        getSignalColor(signal.toUpperCase()),
+        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border transition-all duration-200 hover:scale-105",
+        signalColor,
         className
       )}
     >
@@ -53,4 +64,3 @@ export const Signal = ({ signal, className }: SignalProps) => {
     </span>
   );
 };
-
