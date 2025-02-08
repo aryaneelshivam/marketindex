@@ -1,3 +1,4 @@
+
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Signal } from "@/components/Signal";
 import { TrendingDown, TrendingUp, ArrowUp, ArrowDown, Minus } from "lucide-react";
@@ -91,21 +92,20 @@ export const StockTableRow = ({
   };
 
   const getADXSignal = (strength: string) => {
-    if (strength === "STRONG" || strength === "WEAK") {
-      return strength;
-    }
+    if (strength === "STRONG") return "Strong";
+    if (strength === "WEAK") return "Weak";
     return "NEUTRAL";
   };
 
   const getADXIcon = (signal: string) => {
-    if (signal === "STRONG") return <ArrowUp className="w-4 h-4 text-emerald-500" />;
-    if (signal === "WEAK") return <ArrowDown className="w-4 h-4 text-red-500" />;
+    if (signal === "Strong") return <ArrowUp className="w-4 h-4 text-emerald-500" />;
+    if (signal === "Weak") return <ArrowDown className="w-4 h-4 text-red-500" />;
     return <Minus className="w-4 h-4 text-zinc-400" />;
   };
 
   const getADXClass = (signal: string) => {
-    if (signal === "STRONG") return "bg-emerald-500/20 text-emerald-400 border-emerald-500/50 font-medium";
-    if (signal === "WEAK") return "bg-red-500/20 text-red-400 border-red-500/50 font-medium";
+    if (signal === "Strong") return "bg-emerald-500/20 text-emerald-400 border-emerald-500/50 font-medium";
+    if (signal === "Weak") return "bg-red-500/20 text-red-400 border-red-500/50 font-medium";
     return "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100";
   };
 
