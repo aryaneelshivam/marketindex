@@ -183,10 +183,10 @@ export const StockTable = ({ data }: StockTableProps) => {
 
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
     if (emaSignal === "BUY" && smaSignal === "BUY") {
-      return "bg-[#F2FCE2] dark:bg-green-950/30";
+      return "bg-green-950/30";
     }
     if (emaSignal === "SELL" && smaSignal === "SELL") {
-      return "bg-red-50 dark:bg-red-950/30";
+      return "bg-red-950/30";
     }
     return "";
   };
@@ -220,20 +220,40 @@ export const StockTable = ({ data }: StockTableProps) => {
   };
 
   return (
-    <div className="rounded-md border overflow-x-auto">
+    <div className="rounded-md border border-border overflow-x-auto bg-card">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/50">
-            <TableHead className="w-[80px] font-semibold">#</TableHead>
-            <TableHead className="w-[120px] font-semibold">Symbol</TableHead>
-            <TableHead className="font-semibold">EMA Signal</TableHead>
-            <TableHead className="font-semibold">SMA Signal</TableHead>
-            <TableHead className="font-semibold">MACD Crossover</TableHead>
-            <TableHead className="font-semibold">Volume Divergence</TableHead>
-            <TableHead className="font-semibold">ADX Strength</TableHead>
-            <TableHead className="font-semibold">RSI</TableHead>
-            <TableHead className="font-semibold">Stochastic</TableHead>
-            <TableHead className="font-semibold">Analysis rating</TableHead>
+          <TableRow className="bg-muted/50 hover:bg-muted/50">
+            <TableHead className="w-[80px] font-semibold text-foreground">
+              #
+            </TableHead>
+            <TableHead className="w-[120px] font-semibold text-foreground">
+              Symbol
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              EMA Signal
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              SMA Signal
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              MACD Crossover
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Volume Divergence
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              ADX Strength
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              RSI
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Stochastic
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Analysis rating
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -241,7 +261,7 @@ export const StockTable = ({ data }: StockTableProps) => {
             <TableRow
               key={stock.Symbol}
               className={`hover:bg-muted/50 transition-colors cursor-pointer ${
-                selectedStock === stock.Symbol ? 'bg-muted' : ''
+                selectedStock === stock.Symbol ? "bg-muted/50" : ""
               } ${getRowBackgroundColor(
                 stock["Last EMA Signal"],
                 stock["Last SMA Signal"]
@@ -251,7 +271,7 @@ export const StockTable = ({ data }: StockTableProps) => {
               <TableCell className="font-medium text-muted-foreground">
                 {index + 1}
               </TableCell>
-              <TableCell className="font-medium flex items-center">
+              <TableCell className="font-medium text-foreground flex items-center">
                 {stock.Symbol}
                 {getTrendIcon(stock["Last EMA Signal"], stock["Last SMA Signal"])}
               </TableCell>
@@ -332,7 +352,7 @@ export const StockTable = ({ data }: StockTableProps) => {
         </TableBody>
       </Table>
       <StockDetails 
-        symbol={selectedStock || ''} 
+        symbol={selectedStock || ""} 
         onClose={() => setSelectedStock(null)} 
       />
     </div>
