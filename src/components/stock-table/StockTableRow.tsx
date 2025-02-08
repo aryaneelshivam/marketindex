@@ -4,6 +4,7 @@ import { Signal } from "@/components/Signal";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useStockPrice } from "@/hooks/use-stock-data";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MiniChart } from "./MiniChart";
 
 interface StockTableRowProps {
   stock: {
@@ -99,6 +100,9 @@ export const StockTableRow = ({
         ) : (
           `${priceData?.change?.toFixed(2)}%`
         )}
+      </TableCell>
+      <TableCell>
+        <MiniChart symbol={stock.Symbol} currentPrice={parseFloat(priceData?.currentPrice || "0")} />
       </TableCell>
       <TableCell>
         <Signal signal={stock["Last EMA Signal"]} />

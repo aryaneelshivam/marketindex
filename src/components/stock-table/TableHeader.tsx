@@ -22,6 +22,9 @@ export const StockTableHeader = () => {
           Change
         </TableHead>
         <TableHead className="font-medium text-muted-foreground">
+          Chart
+        </TableHead>
+        <TableHead className="font-medium text-muted-foreground">
           EMA Signal
         </TableHead>
         <TableHead className="font-medium text-muted-foreground">
