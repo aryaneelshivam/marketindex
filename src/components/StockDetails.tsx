@@ -67,8 +67,8 @@ const fetchStockHistory = async (symbol: string, period: string): Promise<PriceD
 };
 
 const ProfileSection = ({ title, data }: { title: string; data: Record<string, any> }) => (
-  <div className="mb-6">
-    <h3 className="text-lg font-semibold mb-2">{title}</h3>
+  <div className="mb-4">
+    <h3 className="text-base font-semibold mb-2">{title}</h3>
     <Table>
       <TableBody>
         {Object.entries(data).map(([key, value], index) => {
@@ -88,16 +88,16 @@ const ProfileSection = ({ title, data }: { title: string; data: Record<string, a
               key={key}
               className={index % 2 === 0 ? 'bg-muted/30' : ''}
             >
-              <TableCell className="font-medium capitalize text-sm text-muted-foreground">
+              <TableCell className="font-medium capitalize text-xs text-muted-foreground py-2">
                 {key.replace(/([A-Z])/g, ' $1').trim()}
               </TableCell>
-              <TableCell className={`text-sm font-semibold flex items-center gap-2
+              <TableCell className={`text-xs font-semibold flex items-center gap-1 py-2
                 ${isPositive ? 'text-signal-buy' : ''}
                 ${isNegative ? 'text-signal-sell' : ''}`}
               >
                 {formattedValue}
-                {isPositive && <TrendingUp className="w-4 h-4" />}
-                {isNegative && <TrendingDown className="w-4 h-4" />}
+                {isPositive && <TrendingUp className="w-3 h-3" />}
+                {isNegative && <TrendingDown className="w-3 h-3" />}
               </TableCell>
             </TableRow>
           );
@@ -116,24 +116,22 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
     enabled: !!symbol,
   });
 
-  if (isLoading) return <Skeleton className="h-[300px] w-full" />;
+  if (isLoading) return <Skeleton className="h-[200px] w-full" />;
   if (!priceData || priceData.length === 0) return <div>No price data available</div>;
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <ToggleGroup type="single" value={period} onValueChange={(value) => value && setPeriod(value)} className="bg-muted p-1 rounded-lg">
-          <ToggleGroupItem value="1mo" className="text-xs px-3">1M</ToggleGroupItem>
-          <ToggleGroupItem value="3mo" className="text-xs px-3">3M</ToggleGroupItem>
-          <ToggleGroupItem value="6mo" className="text-xs px-3">6M</ToggleGroupItem>
-          <ToggleGroupItem value="1y" className="text-xs px-3">1Y</ToggleGroupItem>
-          <ToggleGroupItem value="3y" className="text-xs px-3">3Y</ToggleGroupItem>
-          <ToggleGroupItem value="5y" className="text-xs px-3">5Y</ToggleGroupItem>
-        </ToggleGroup>
-      </div>
-      <div className="h-[400px] w-full">
+    <div className="space-y-3">
+      <ToggleGroup type="single" value={period} onValueChange={(value) => value && setPeriod(value)} className="bg-muted p-1 rounded-lg">
+        <ToggleGroupItem value="1mo" className="text-[10px] px-2">1M</ToggleGroupItem>
+        <ToggleGroupItem value="3mo" className="text-[10px] px-2">3M</ToggleGroupItem>
+        <ToggleGroupItem value="6mo" className="text-[10px] px-2">6M</ToggleGroupItem>
+        <ToggleGroupItem value="1y" className="text-[10px] px-2">1Y</ToggleGroupItem>
+        <ToggleGroupItem value="3y" className="text-[10px] px-2">3Y</ToggleGroupItem>
+        <ToggleGroupItem value="5y" className="text-[10px] px-2">5Y</ToggleGroupItem>
+      </ToggleGroup>
+      <div className="h-[200px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={priceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+          <AreaChart data={priceData} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
@@ -142,12 +140,12 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
             </defs>
             <XAxis 
               dataKey="date" 
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 10 }}
               tickLine={false}
               axisLine={false}
             />
             <YAxis 
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 10 }}
               tickLine={false}
               axisLine={false}
               domain={['auto', 'auto']}
@@ -158,7 +156,7 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
                 backgroundColor: 'var(--background)',
                 border: '1px solid var(--border)',
                 borderRadius: '8px',
-                fontSize: '12px'
+                fontSize: '10px'
               }}
             />
             <Area
@@ -196,20 +194,20 @@ export const StockDetails = ({ symbol }: StockDetailsProps) => {
 
   return (
     <div className="rounded-xl border bg-card/50 backdrop-blur-sm overflow-hidden h-full">
-      <div className="p-4 border-b">
-        <h2 className="text-xl font-semibold mb-4">{symbol}</h2>
+      <div className="p-3 border-b">
+        <h2 className="text-lg font-semibold mb-3">{symbol}</h2>
         <PriceChart symbol={symbol} />
       </div>
       
-      <div className="p-4 overflow-y-auto max-h-[calc(100vh-600px)]">
+      <div className="p-3 overflow-y-auto max-h-[calc(100vh-450px)]">
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="w-full mb-4 bg-muted/50 backdrop-blur-sm">
-            <TabsTrigger value="overview" className="flex-1">Overview 🔎</TabsTrigger>
-            <TabsTrigger value="financials" className="flex-1">Financials 💰</TabsTrigger>
-            <TabsTrigger value="peers" className="flex-1">Peers ⛓️‍💥</TabsTrigger>
+          <TabsList className="w-full mb-3 bg-muted/50 backdrop-blur-sm">
+            <TabsTrigger value="overview" className="flex-1 text-xs">Overview 🔎</TabsTrigger>
+            <TabsTrigger value="financials" className="flex-1 text-xs">Financials 💰</TabsTrigger>
+            <TabsTrigger value="peers" className="flex-1 text-xs">Peers ⛓️‍💥</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="overview" className="space-y-4">
             {isLoading ? (
               <div className="space-y-4">
                 <Skeleton className="h-[100px] w-full" />
@@ -225,7 +223,7 @@ export const StockDetails = ({ symbol }: StockDetailsProps) => {
             ) : null}
           </TabsContent>
           
-          <TabsContent value="financials" className="space-y-6">
+          <TabsContent value="financials" className="space-y-4">
             {isLoading ? (
               <div className="space-y-4">
                 <Skeleton className="h-[100px] w-full" />
@@ -240,7 +238,7 @@ export const StockDetails = ({ symbol }: StockDetailsProps) => {
             ) : null}
           </TabsContent>
           
-          <TabsContent value="peers" className="space-y-6">
+          <TabsContent value="peers" className="space-y-4">
             {isLoading ? (
               <div className="space-y-4">
                 <Skeleton className="h-[100px] w-full" />
