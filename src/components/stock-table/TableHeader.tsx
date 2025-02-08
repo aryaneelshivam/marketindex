@@ -36,10 +36,8 @@ export const StockTableHeader = () => {
         <TableHead className="font-medium text-muted-foreground">
           ADX
         </TableHead>
-        <TableHead className="font-medium text-muted-foreground">
-          Actions
-        </TableHead>
       </TableRow>
     </TableHeader>
   );
 };
+

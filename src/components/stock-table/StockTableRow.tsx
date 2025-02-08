@@ -2,7 +2,6 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Signal } from "@/components/Signal";
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { VotingButtons } from "./VotingButtons";
 
 interface StockTableRowProps {
   stock: {
@@ -24,11 +23,6 @@ interface StockTableRowProps {
   };
   index: number;
   isSelected: boolean;
-  userVote?: string;
-  votes: {
-    bullish: number;
-    bearish: number;
-  };
   onSelect: () => void;
 }
 
@@ -36,8 +30,6 @@ export const StockTableRow = ({
   stock, 
   index, 
   isSelected, 
-  userVote,
-  votes,
   onSelect 
 }: StockTableRowProps) => {
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
@@ -112,13 +104,6 @@ export const StockTableRow = ({
         <Signal 
           signal={stock["ADX Strength"]} 
           className={getNeutralPillColor(stock["ADX Strength"])}
-        />
-      </TableCell>
-      <TableCell onClick={(e) => e.stopPropagation()}>
-        <VotingButtons
-          symbol={stock.Symbol}
-          userVote={userVote}
-          votes={votes}
         />
       </TableCell>
     </TableRow>
