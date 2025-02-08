@@ -1,8 +1,10 @@
+
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Signal } from "@/components/Signal";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useStockPrice } from "@/hooks/use-stock-data";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ADXSignal } from "@/components/ADXSignal";
 
 interface StockTableRowProps {
   stock: {
@@ -90,12 +92,6 @@ export const StockTableRow = ({
     return "text-muted-foreground";
   };
 
-  const getADXSignal = (strength: string): "BUY" | "SELL" | "NEUTRAL" => {
-    if (strength === "STRONG") return "BUY";
-    if (strength === "WEAK") return "SELL";
-    return "NEUTRAL";
-  };
-
   return (
     <TableRow
       className={`group transition-all duration-200 cursor-pointer backdrop-blur-sm border-b border-border/40 hover:bg-muted/30 ${
@@ -151,10 +147,7 @@ export const StockTableRow = ({
         />
       </TableCell>
       <TableCell>
-        <Signal 
-          signal={getADXSignal(stock["ADX Strength"])}
-          className={getNeutralPillColor(getADXSignal(stock["ADX Strength"]))}
-        />
+        <ADXSignal strength={stock["ADX Strength"]} />
       </TableCell>
       <TableCell>
         <div className="flex flex-col">
