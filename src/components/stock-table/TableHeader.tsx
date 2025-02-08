@@ -10,7 +10,7 @@ export const StockTableHeader = () => {
     <TableHeader>
       <TableRow className="bg-background/50 hover:bg-background/50 backdrop-blur-md border-b border-border/40">
         <TableHead className="w-[80px] font-medium text-muted-foreground">
-          #
+          S.no
         </TableHead>
         <TableHead className="w-[180px] font-medium text-muted-foreground">
           Symbol
@@ -22,7 +22,7 @@ export const StockTableHeader = () => {
           Change
         </TableHead>
         <TableHead className="font-medium text-muted-foreground">
-          Chart
+          Trend
         </TableHead>
         <TableHead className="font-medium text-muted-foreground">
           EMA Signal
