@@ -80,7 +80,7 @@ export const StockTableRow = ({
 
   return (
     <TableRow
-      className={`hover:bg-muted/30 transition-all duration-200 cursor-pointer backdrop-blur-sm ${
+      className={`group transition-all duration-200 cursor-pointer backdrop-blur-sm border-b border-border/40 hover:bg-muted/30 ${
         isSelected ? "bg-muted/50" : ""
       } ${getRowBackgroundColor(
         stock["Last EMA Signal"],
