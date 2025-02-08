@@ -8,7 +8,7 @@ interface SignalProps {
 
 export const Signal = ({ signal, className }: SignalProps) => {
   const getSignalColor = (signal: string) => {
-    // Strong signals
+    // Strong buy/sell signals
     if (signal === "BUY") {
       return "bg-emerald-500/20 text-emerald-400 border-emerald-500/50 font-semibold";
     }
