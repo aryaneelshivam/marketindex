@@ -42,9 +42,10 @@ interface VoteData {
 
 interface StockTableProps {
   data: StockData[];
+  onStockSelect?: (symbol: string) => void;  // Added this prop definition
 }
 
-export const StockTable = ({ data }: StockTableProps) => {
+export const StockTable = ({ data, onStockSelect }: StockTableProps) => {
   const [selectedStock, setSelectedStock] = useState<string | null>(data[0]?.Symbol || null);
   const [voteCounts, setVoteCounts] = useState<VoteData>({});
   const [userVotes, setUserVotes] = useState<{[key: string]: string}>({});
@@ -122,6 +123,11 @@ export const StockTable = ({ data }: StockTableProps) => {
     };
   }, [session]);
 
+  const handleStockSelect = (symbol: string) => {
+    setSelectedStock(symbol);
+    onStockSelect?.(symbol);  // Call the prop function if it exists
+  };
+
   return (
     <div className="rounded-lg border border-border/40 overflow-x-auto bg-card/30 backdrop-blur-sm shadow-lg">
       <Table>
@@ -135,15 +141,12 @@ export const StockTable = ({ data }: StockTableProps) => {
               isSelected={selectedStock === stock.Symbol}
               userVote={userVotes[stock.Symbol]}
               votes={voteCounts[stock.Symbol] || { bullish: 0, bearish: 0 }}
-              onSelect={() => setSelectedStock(stock.Symbol)}
+              onSelect={() => handleStockSelect(stock.Symbol)}
             />
           ))}
         </TableBody>
       </Table>
-      <StockDetails 
-        symbol={selectedStock || ""} 
-        onClose={() => setSelectedStock(null)} 
-      />
+      <StockDetails symbol={selectedStock} />
     </div>
   );
 };

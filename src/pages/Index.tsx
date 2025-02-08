@@ -1,4 +1,3 @@
-
 import { useStockData, type Sector } from "@/hooks/use-stock-data";
 import { StockTable } from "@/components/StockTable";
 import { useToast } from "@/hooks/use-toast";
@@ -395,7 +394,7 @@ const Index = () => {
                 <>
                   <StockTable 
                     data={displayData} 
-                    onStockSelect={(symbol) => setSelectedStock(symbol)}
+                    onStockSelect={setSelectedStock}
                   />
                   {!isAuthenticated && <Paywall />}
                 </>
@@ -414,4 +413,3 @@ const Index = () => {
 };
 
 export default Index;
-

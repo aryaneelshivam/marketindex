@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -25,6 +24,7 @@ import { formatNumber } from "@/lib/formatNumber";
 
 interface StockDetailsProps {
   symbol: string | null;
+  onClose?: () => void;  // Made optional since it's not always needed
 }
 
 interface StockProfile {
@@ -174,7 +174,7 @@ const PriceChart = ({ symbol }: { symbol: string }) => {
   );
 };
 
-export const StockDetails = ({ symbol }: StockDetailsProps) => {
+export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ['stockProfile', symbol],
     queryFn: () => fetchStockProfile(symbol!),
@@ -257,4 +257,3 @@ export const StockDetails = ({ symbol }: StockDetailsProps) => {
     </div>
   );
 };
-
