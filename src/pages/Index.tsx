@@ -2,22 +2,15 @@
 import { useStockData, type Sector } from "@/hooks/use-stock-data";
 import { StockTable } from "@/components/StockTable";
 import { useToast } from "@/hooks/use-toast";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { Input } from "@/components/ui/input";
-import { Search, Lock, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { SectorSelection } from "@/components/stock-sectors/SectorSelection";
+import { SearchAndDownload } from "@/components/stock-search/SearchAndDownload";
+import { PeriodSelection } from "@/components/stock-period/PeriodSelection";
+import { StockFilters } from "@/components/stock-filters/StockFilters";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -30,7 +23,6 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [selectedStock, setSelectedStock] = useState<string | null>(null);
   
   const { data: rawData, isLoading, error } = useStockData(period, sector);
   const { toast } = useToast();
@@ -123,263 +115,33 @@ const Index = () => {
           </div>
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="w-full md:w-auto">
-              <RadioGroup
-                value={sector}
-                onValueChange={(value) => setSector(value as Sector)}
-                className="flex flex-wrap gap-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="most_active" id="most_active" />
-                  <Label htmlFor="most_active" className="cursor-pointer">Most Active Equities 🔥</Label>
-                </div>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex items-center space-x-2 opacity-75">
-                        <RadioGroupItem 
-                          value="financial" 
-                          id="financial" 
-                          disabled={!isAuthenticated}
-                        />
-                        <Label 
-                          htmlFor="financial" 
-                          className={`cursor-pointer flex items-center gap-2 ${!isAuthenticated ? 'cursor-not-allowed' : ''}`}
-                        >
-                          Financial Sector 💸
-                          {!isAuthenticated && <Lock className="h-4 w-4" />}
-                        </Label>
-                      </div>
-                    </TooltipTrigger>
-                    {!isAuthenticated && (
-                      <TooltipContent>
-                        <p>Sign in to access Financial Sector data</p>
-                      </TooltipContent>
-                    )}
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex items-center space-x-2 opacity-75">
-                        <RadioGroupItem 
-                          value="energy" 
-                          id="energy" 
-                          disabled={!isAuthenticated}
-                        />
-                        <Label 
-                          htmlFor="energy" 
-                          className={`cursor-pointer flex items-center gap-2 ${!isAuthenticated ? 'cursor-not-allowed' : ''}`}
-                        >
-                          Energy Sector ♻️
-                          {!isAuthenticated && <Lock className="h-4 w-4" />}
-                        </Label>
-                      </div>
-                    </TooltipTrigger>
-                    {!isAuthenticated && (
-                      <TooltipContent>
-                        <p>Sign in to access Energy Sector data</p>
-                      </TooltipContent>
-                    )}
-                  </Tooltip>
-                </TooltipProvider>
-              </RadioGroup>
-            </div>
-
-            <div className="flex items-center gap-4 w-full md:w-auto">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="relative w-full max-w-sm">
-                      <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Search stocks..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9"
-                        disabled={!isAuthenticated}
-                      />
-                      {!isAuthenticated && (
-                        <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      )}
-                    </div>
-                  </TooltipTrigger>
-                  {!isAuthenticated && (
-                    <TooltipContent>
-                      <p>Sign in to search stocks</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </TooltipProvider>
-
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={handleDownloadAnalysis}
-                      className="whitespace-nowrap"
-                      disabled={!isAuthenticated}
-                    >
-                      {isAuthenticated ? (
-                        <Download className="w-4 h-4 mr-2" />
-                      ) : (
-                        <Lock className="w-4 h-4 mr-2" />
-                      )}
-                      Download Analysis
-                    </Button>
-                  </TooltipTrigger>
-                  {!isAuthenticated && (
-                    <TooltipContent>
-                      <p>Sign in to download analysis data</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            <SectorSelection
+              sector={sector}
+              setSector={setSector}
+              isAuthenticated={isAuthenticated}
+            />
+            <SearchAndDownload
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              isAuthenticated={isAuthenticated}
+              handleDownloadAnalysis={handleDownloadAnalysis}
+            />
           </div>
 
-          <div className="rounded-lg border bg-card p-4">
-            <RadioGroup
-              defaultValue="3mo"
-              value={period}
-              onValueChange={setPeriod}
-              className="flex flex-wrap gap-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1mo" id="1mo" />
-                <Label htmlFor="1mo">1 Month</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3mo" id="3mo" />
-                <Label htmlFor="3mo">3 Months</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="6mo" id="6mo" />
-                <Label htmlFor="6mo">6 Months</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1y" id="1y" />
-                <Label htmlFor="1y">1 Year</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          <PeriodSelection period={period} setPeriod={setPeriod} />
 
-          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
-            <div className="rounded-lg border bg-card p-4">
-              <p className="mb-3 text-sm font-medium">EMA Signal</p>
-              <RadioGroup
-                defaultValue="ALL"
-                value={emaFilter}
-                onValueChange={setEmaFilter}
-                className="flex flex-col gap-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="ALL" id="ema-all" />
-                  <Label htmlFor="ema-all">All</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="BUY" id="ema-buy" />
-                  <Label htmlFor="ema-buy">Buy</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="SELL" id="ema-sell" />
-                  <Label htmlFor="ema-sell">Sell</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div className="rounded-lg border bg-card p-4">
-              <p className="mb-3 text-sm font-medium">SMA Signal</p>
-              <RadioGroup
-                defaultValue="ALL"
-                value={smaFilter}
-                onValueChange={setSmaFilter}
-                className="flex flex-col gap-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="ALL" id="sma-all" />
-                  <Label htmlFor="sma-all">All</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="BUY" id="sma-buy" />
-                  <Label htmlFor="sma-buy">Buy</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="SELL" id="sma-sell" />
-                  <Label htmlFor="sma-sell">Sell</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div className="rounded-lg border bg-card p-4">
-              <p className="mb-3 text-sm font-medium">MACD Crossover</p>
-              <RadioGroup
-                defaultValue="ALL"
-                value={macdFilter}
-                onValueChange={setMacdFilter}
-                className="flex flex-col gap-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="ALL" id="macd-all" />
-                  <Label htmlFor="macd-all">All</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="YES" id="macd-yes" />
-                  <Label htmlFor="macd-yes">Yes</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="NO" id="macd-no" />
-                  <Label htmlFor="macd-no">No</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div className="rounded-lg border bg-card p-4">
-              <p className="mb-3 text-sm font-medium">RSI Condition</p>
-              <RadioGroup
-                defaultValue="ALL"
-                value={rsiFilter}
-                onValueChange={setRsiFilter}
-                className="flex flex-col gap-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="ALL" id="rsi-all" />
-                  <Label htmlFor="rsi-all">All</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="OVERSOLD" id="rsi-oversold" />
-                  <Label htmlFor="rsi-oversold">Oversold</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="NEUTRAL" id="rsi-neutral" />
-                  <Label htmlFor="rsi-neutral">Neutral</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div className="rounded-lg border bg-card p-4">
-              <p className="mb-3 text-sm font-medium">Stochastic Condition</p>
-              <RadioGroup
-                defaultValue="ALL"
-                value={stochFilter}
-                onValueChange={setStochFilter}
-                className="flex flex-col gap-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="ALL" id="stoch-all" />
-                  <Label htmlFor="stoch-all">All</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="OVERSOLD" id="stoch-oversold" />
-                  <Label htmlFor="stoch-oversold">Oversold</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="NEUTRAL" id="stoch-neutral" />
-                  <Label htmlFor="stoch-neutral">Neutral</Label>
-                </div>
-              </RadioGroup>
-            </div>
-          </div>
+          <StockFilters
+            emaFilter={emaFilter}
+            setEmaFilter={setEmaFilter}
+            smaFilter={smaFilter}
+            setSmaFilter={setSmaFilter}
+            macdFilter={macdFilter}
+            setMacdFilter={setMacdFilter}
+            rsiFilter={rsiFilter}
+            setRsiFilter={setRsiFilter}
+            stochFilter={stochFilter}
+            setStochFilter={setStochFilter}
+          />
 
           <div className="w-full">
             {isLoading ? (
