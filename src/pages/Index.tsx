@@ -11,6 +11,7 @@ import { Search, Lock, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
 import { Button } from "@/components/ui/button";
+import { NewsPanel } from "@/components/NewsPanel";
 import {
   Tooltip,
   TooltipContent,
@@ -112,7 +113,7 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       <div className="flex-1 p-4 md:p-8">
-        <div className="mx-auto max-w-[1400px] space-y-6">
+        <div className="mx-auto max-w-[1800px] space-y-6">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tight">Monitor equities across sectors</h1>
             <p className="text-muted-foreground">
@@ -379,19 +380,25 @@ const Index = () => {
             </div>
           </div>
 
-          {isLoading ? (
-            <div className="space-y-4 text-center py-8">
-              <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
-              <p className="text-muted-foreground animate-pulse">
-                Fetching latest market data from server and performing analysis...
-              </p>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-6">
+            <div className="space-y-4">
+              {isLoading ? (
+                <div className="space-y-4 text-center py-8">
+                  <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+                  <p className="text-muted-foreground animate-pulse">
+                    Fetching latest market data from server and performing analysis...
+                  </p>
+                </div>
+              ) : displayData ? (
+                <>
+                  <StockTable data={displayData} />
+                  {!isAuthenticated && <Paywall />}
+                </>
+              ) : null}
             </div>
-          ) : displayData ? (
-            <>
-              <StockTable data={displayData} />
-              {!isAuthenticated && <Paywall />}
-            </>
-          ) : null}
+
+            <NewsPanel />
+          </div>
         </div>
       </div>
       <Footer />

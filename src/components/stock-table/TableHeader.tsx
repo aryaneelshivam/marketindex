@@ -9,35 +9,35 @@ export const StockTableHeader = () => {
   return (
     <TableHeader>
       <TableRow className="bg-background/50 hover:bg-background/50 backdrop-blur-md border-b border-border/40">
-        <TableHead className="w-[80px] font-semibold text-foreground/80">
+        <TableHead className="w-[80px] font-medium text-muted-foreground">
           #
         </TableHead>
-        <TableHead className="w-[120px] font-semibold text-foreground/80">
+        <TableHead className="w-[180px] font-medium text-muted-foreground">
           Symbol
         </TableHead>
-        <TableHead className="font-semibold text-foreground/80">
+        <TableHead className="font-medium text-muted-foreground">
+          Price
+        </TableHead>
+        <TableHead className="font-medium text-muted-foreground">
+          Change
+        </TableHead>
+        <TableHead className="font-medium text-muted-foreground">
           EMA Signal
         </TableHead>
-        <TableHead className="font-semibold text-foreground/80">
+        <TableHead className="font-medium text-muted-foreground">
           SMA Signal
         </TableHead>
-        <TableHead className="font-semibold text-foreground/80">
-          MACD Crossover
+        <TableHead className="font-medium text-muted-foreground">
+          MACD
         </TableHead>
-        <TableHead className="font-semibold text-foreground/80">
-          Volume Divergence
+        <TableHead className="font-medium text-muted-foreground">
+          Volume
         </TableHead>
-        <TableHead className="font-semibold text-foreground/80">
-          ADX Strength
+        <TableHead className="font-medium text-muted-foreground">
+          ADX
         </TableHead>
-        <TableHead className="font-semibold text-foreground/80">
-          RSI
-        </TableHead>
-        <TableHead className="font-semibold text-foreground/80">
-          Stochastic
-        </TableHead>
-        <TableHead className="font-semibold text-foreground/80">
-          Analysis rating
+        <TableHead className="font-medium text-muted-foreground">
+          Actions
         </TableHead>
       </TableRow>
     </TableHeader>

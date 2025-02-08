@@ -42,10 +42,10 @@ export const StockTableRow = ({
 }: StockTableRowProps) => {
   const getRowBackgroundColor = (emaSignal: string, smaSignal: string) => {
     if (emaSignal === "BUY" && smaSignal === "BUY") {
-      return "bg-green-950/20 backdrop-blur-sm";
+      return "bg-green-950/10 backdrop-blur-sm";
     }
     if (emaSignal === "SELL" && smaSignal === "SELL") {
-      return "bg-red-950/20 backdrop-blur-sm";
+      return "bg-red-950/10 backdrop-blur-sm";
     }
     return "";
   };
@@ -58,19 +58,6 @@ export const StockTableRow = ({
       return <TrendingDown className="w-4 h-4 text-signal-sell ml-2" />;
     }
     return null;
-  };
-
-  const getRSIColor = (value: number) => {
-    if (value >= 70) return "text-signal-sell font-semibold";
-    if (value <= 30) return "text-signal-buy font-semibold";
-    return "text-muted-foreground";
-  };
-
-  const getStochColor = (kValue: number, dValue: number) => {
-    const avgValue = (kValue + dValue) / 2;
-    if (avgValue >= 80) return "text-signal-sell font-semibold";
-    if (avgValue <= 20) return "text-signal-buy font-semibold";
-    return "text-muted-foreground";
   };
 
   const getNeutralPillColor = (signal: string) => {
@@ -91,9 +78,17 @@ export const StockTableRow = ({
       <TableCell className="font-medium text-muted-foreground">
         {index + 1}
       </TableCell>
-      <TableCell className="font-medium text-foreground/90 flex items-center">
-        {stock.Symbol}
-        {getTrendIcon(stock["Last EMA Signal"], stock["Last SMA Signal"])}
+      <TableCell className="font-medium">
+        <div className="flex flex-col">
+          <span className="text-foreground/90">{stock.Symbol}</span>
+          <span className="text-xs text-muted-foreground">NSE</span>
+        </div>
+      </TableCell>
+      <TableCell className="font-medium">
+        ₹{(Math.random() * 1000 + 100).toFixed(2)}
+      </TableCell>
+      <TableCell className={`font-medium ${Math.random() > 0.5 ? 'text-red-500' : 'text-green-500'}`}>
+        {(Math.random() * 2 - 1).toFixed(2)}%
       </TableCell>
       <TableCell>
         <Signal signal={stock["Last EMA Signal"]} />
@@ -118,32 +113,6 @@ export const StockTableRow = ({
           signal={stock["ADX Strength"]} 
           className={getNeutralPillColor(stock["ADX Strength"])}
         />
-      </TableCell>
-      <TableCell>
-        <div className="flex flex-col gap-1">
-          <span className={`text-sm font-medium ${getRSIColor(stock.RSI.Value)}`}>
-            {stock.RSI.Value.toFixed(2)}
-          </span>
-          <Signal 
-            signal={stock.RSI.Condition} 
-            className={`w-fit ${getNeutralPillColor(stock.RSI.Condition)}`}
-          />
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className="flex flex-col gap-1">
-          <div className={`text-sm font-medium ${getStochColor(
-            stock.Stochastic.k_value,
-            stock.Stochastic.d_value
-          )}`}>
-            <div>K: {stock.Stochastic.k_value.toFixed(2)}</div>
-            <div>D: {stock.Stochastic.d_value.toFixed(2)}</div>
-          </div>
-          <Signal 
-            signal={stock.Stochastic.Condition} 
-            className={`w-fit ${getNeutralPillColor(stock.Stochastic.Condition)}`}
-          />
-        </div>
       </TableCell>
       <TableCell onClick={(e) => e.stopPropagation()}>
         <VotingButtons
