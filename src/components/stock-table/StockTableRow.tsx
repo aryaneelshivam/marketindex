@@ -99,9 +99,10 @@ export const StockTableRow = ({
   };
 
   const getADXSignal = (strength: string) => {
-    if (strength === "STRONG") return "STRONG";
-    if (strength === "WEAK") return "WEAK";
-    return strength; // Return the original value if not STRONG/WEAK
+    if (strength === "STRONG" || strength === "WEAK") {
+      return strength;
+    }
+    return "NEUTRAL"; // Return NEUTRAL for any other value
   };
 
   const getADXClass = (signal: string) => {
