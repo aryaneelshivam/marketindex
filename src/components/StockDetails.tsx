@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -185,7 +186,7 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
 
   if (!symbol) {
     return (
-      <div className="fixed bottom-4 right-4">
+      <div className="fixed bottom-4 right-4 z-50">
         <Alert className="w-[300px] border-black/10 bg-[#1A1F2C] text-white">
           <Info className="h-4 w-4 text-white" />
           <AlertDescription>
@@ -197,13 +198,13 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
   }
 
   return (
-    <div className="fixed top-20 right-4 w-full max-w-[500px] max-h-[calc(100vh-100px)] overflow-y-auto bg-background border rounded-xl shadow-lg">
-      <div className="bg-background p-4 border-b">
+    <div className="fixed top-20 right-4 w-full max-w-[500px] max-h-[calc(100vh-100px)] overflow-y-auto bg-background/95 backdrop-blur-xl border border-border/40 rounded-xl shadow-2xl z-50 animate-in fade-in slide-in-from-right duration-300">
+      <div className="sticky top-0 bg-background/95 backdrop-blur-xl p-4 border-b border-border/40">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">{symbol}</h2>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-muted rounded-lg"
+            className="p-2 hover:bg-muted rounded-lg transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -213,7 +214,7 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
       
       <div className="p-4">
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="w-full mb-4">
+          <TabsList className="w-full mb-4 bg-muted/50 backdrop-blur-sm">
             <TabsTrigger value="overview" className="flex-1">Overview 🔎</TabsTrigger>
             <TabsTrigger value="financials" className="flex-1">Financials 💰</TabsTrigger>
             <TabsTrigger value="peers" className="flex-1">Peers ⛓️‍💥</TabsTrigger>
