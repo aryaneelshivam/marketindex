@@ -11,7 +11,6 @@ import { Search, Lock, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paywall } from "@/components/Paywall";
 import { Button } from "@/components/ui/button";
-import { StockDetails } from "@/components/StockDetails";
 import {
   Tooltip,
   TooltipContent,
@@ -233,7 +232,7 @@ const Index = () => {
                       <p>Sign in to download analysis data</p>
                     </TooltipContent>
                   )}
-                </Tooltip>
+                </TooltipProvider>
               </TooltipProvider>
             </div>
           </div>
@@ -381,29 +380,20 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-6">
-            <div className="space-y-4">
-              {isLoading ? (
-                <div className="space-y-4 text-center py-8">
-                  <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
-                  <p className="text-muted-foreground animate-pulse">
-                    Fetching latest market data from server and performing analysis...
-                  </p>
-                </div>
-              ) : displayData ? (
-                <>
-                  <StockTable 
-                    data={displayData} 
-                    onStockSelect={setSelectedStock}
-                  />
-                  {!isAuthenticated && <Paywall />}
-                </>
-              ) : null}
-            </div>
-
-            <div className="h-full">
-              <StockDetails symbol={selectedStock} />
-            </div>
+          <div className="w-full">
+            {isLoading ? (
+              <div className="space-y-4 text-center py-8">
+                <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+                <p className="text-muted-foreground animate-pulse">
+                  Fetching latest market data from server and performing analysis...
+                </p>
+              </div>
+            ) : displayData ? (
+              <>
+                <StockTable data={displayData} />
+                {!isAuthenticated && <Paywall />}
+              </>
+            ) : null}
           </div>
         </div>
       </div>
