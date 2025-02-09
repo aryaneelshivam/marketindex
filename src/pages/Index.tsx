@@ -1,4 +1,3 @@
-
 import { useStockData, type Sector } from "@/hooks/use-stock-data";
 import { StockTable } from "@/components/StockTable";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +11,7 @@ import { SearchAndDownload } from "@/components/stock-search/SearchAndDownload";
 import { PeriodSelection } from "@/components/stock-period/PeriodSelection";
 import { StockFilters } from "@/components/stock-filters/StockFilters";
 import { StockDetails } from "@/components/StockDetails";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -28,6 +28,8 @@ const Index = () => {
   
   const { data: rawData, isLoading, error } = useStockData(period, sector);
   const { toast } = useToast();
+
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -46,7 +48,6 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Set initial selected stock when data loads
   useEffect(() => {
     if (rawData && rawData.length > 0 && !selectedStock) {
       setSelectedStock(rawData[0].Symbol);
@@ -153,7 +154,7 @@ const Index = () => {
           />
 
           <div className="flex flex-col lg:flex-row gap-6">
-            <div className="w-full lg:w-[70%] min-w-0">
+            <div className={`w-full ${!isMobile ? 'lg:w-[70%]' : ''} min-w-0`}>
               {isLoading ? (
                 <div className="space-y-4 text-center py-8">
                   <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
@@ -173,9 +174,11 @@ const Index = () => {
               ) : null}
             </div>
             
-            <div className="w-full lg:w-[30%] min-w-0">
-              <StockDetails symbol={selectedStock} />
-            </div>
+            {!isMobile && (
+              <div className="w-full lg:w-[30%] min-w-0">
+                <StockDetails symbol={selectedStock} />
+              </div>
+            )}
           </div>
         </div>
       </div>
