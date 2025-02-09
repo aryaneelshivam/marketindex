@@ -1,3 +1,4 @@
+
 export const formatNumber = (value: number): string => {
   const absValue = Math.abs(value);
   
@@ -13,3 +14,4 @@ export const formatNumber = (value: number): string => {
   
   return value.toFixed(2);
 };
+
