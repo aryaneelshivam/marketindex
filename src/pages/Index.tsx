@@ -1,3 +1,4 @@
+
 import { useStockData, type Sector } from "@/hooks/use-stock-data";
 import { StockTable } from "@/components/StockTable";
 import { useToast } from "@/hooks/use-toast";
@@ -152,7 +153,7 @@ const Index = () => {
           />
 
           <div className="flex flex-col lg:flex-row gap-6">
-            <div className="w-full lg:w-[60%] min-w-0">
+            <div className="w-full lg:w-[70%] min-w-0">
               {isLoading ? (
                 <div className="space-y-4 text-center py-8">
                   <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
@@ -172,7 +173,7 @@ const Index = () => {
               ) : null}
             </div>
             
-            <div className="w-full lg:w-[40%] min-w-0">
+            <div className="w-full lg:w-[30%] min-w-0">
               <StockDetails symbol={selectedStock} />
             </div>
           </div>
