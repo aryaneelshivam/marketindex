@@ -32,10 +32,11 @@ interface StockData {
 
 interface StockTableProps {
   data: StockData[];
+  selectedStock: string | null;
+  onSelectStock: (symbol: string) => void;
 }
 
-export const StockTable = ({ data }: StockTableProps) => {
-  const [selectedStock, setSelectedStock] = useState<string | null>(data[0]?.Symbol || null);
+export const StockTable = ({ data, selectedStock, onSelectStock }: StockTableProps) => {
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export const StockTable = ({ data }: StockTableProps) => {
                 stock={stock}
                 index={index}
                 isSelected={selectedStock === stock.Symbol}
-                onSelect={() => setSelectedStock(stock.Symbol)}
+                onSelect={() => onSelectStock(stock.Symbol)}
               />
             ))}
           </TableBody>
