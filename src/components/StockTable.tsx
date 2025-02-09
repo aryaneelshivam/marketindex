@@ -52,7 +52,7 @@ export const StockTable = ({ data, selectedStock, onSelectStock }: StockTablePro
   }, []);
 
   return (
-    <div className="rounded-lg border border-border/40 overflow-hidden bg-background shadow-lg w-full h-[calc(100vh-12rem)]">
+    <div className="rounded-lg border border-border/40 overflow-hidden bg-background shadow-lg w-full h-[calc(100vh-10rem)]">
       <div className="overflow-y-auto h-full">
         <div className="overflow-x-auto">
           <Table>

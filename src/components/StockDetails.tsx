@@ -185,7 +185,7 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
   }
 
   return (
-    <div className="rounded-xl border bg-card h-[calc(100vh-12rem)] flex flex-col">
+    <div className="rounded-xl border bg-card h-[calc(100vh-10rem)] flex flex-col">
       <div className="p-3 border-b flex-shrink-0">
         <h2 className="text-lg font-semibold mb-2">{symbol}</h2>
         <PriceChart symbol={symbol} />
