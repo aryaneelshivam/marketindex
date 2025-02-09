@@ -52,24 +52,25 @@ export const StockTable = ({ data, selectedStock, onSelectStock }: StockTablePro
   }, []);
 
   return (
-    <div className="rounded-lg border border-border/40 overflow-hidden bg-background shadow-lg w-full">
-      <div className="overflow-x-auto">
-        <Table>
-          <StockTableHeader />
-          <TableBody>
-            {data.map((stock, index) => (
-              <StockTableRow
-                key={stock.Symbol}
-                stock={stock}
-                index={index}
-                isSelected={selectedStock === stock.Symbol}
-                onSelect={() => onSelectStock(stock.Symbol)}
-              />
-            ))}
-          </TableBody>
-        </Table>
+    <div className="rounded-lg border border-border/40 overflow-hidden bg-background shadow-lg w-full h-[calc(100vh-12rem)]">
+      <div className="overflow-y-auto h-full">
+        <div className="overflow-x-auto">
+          <Table>
+            <StockTableHeader />
+            <TableBody>
+              {data.map((stock, index) => (
+                <StockTableRow
+                  key={stock.Symbol}
+                  stock={stock}
+                  index={index}
+                  isSelected={selectedStock === stock.Symbol}
+                  onSelect={() => onSelectStock(stock.Symbol)}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );
 };
-

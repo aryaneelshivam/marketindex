@@ -1,4 +1,3 @@
-
 import { useStockData, type Sector } from "@/hooks/use-stock-data";
 import { StockTable } from "@/components/StockTable";
 import { useToast } from "@/hooks/use-toast";
@@ -173,7 +172,7 @@ const Index = () => {
               ) : null}
             </div>
             
-            <div className="w-full lg:w-[40%] min-w-0 sticky top-4">
+            <div className="w-full lg:w-[40%] min-w-0">
               <StockDetails symbol={selectedStock} />
             </div>
           </div>
@@ -185,4 +184,3 @@ const Index = () => {
 };
 
 export default Index;
-
