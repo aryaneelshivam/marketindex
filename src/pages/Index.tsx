@@ -11,6 +11,7 @@ import { SectorSelection } from "@/components/stock-sectors/SectorSelection";
 import { SearchAndDownload } from "@/components/stock-search/SearchAndDownload";
 import { PeriodSelection } from "@/components/stock-period/PeriodSelection";
 import { StockFilters } from "@/components/stock-filters/StockFilters";
+import { NewsPanel } from "@/components/NewsPanel";
 
 const Index = () => {
   const [period, setPeriod] = useState("3mo");
@@ -143,20 +144,26 @@ const Index = () => {
             setStochFilter={setStochFilter}
           />
 
-          <div className="w-full">
-            {isLoading ? (
-              <div className="space-y-4 text-center py-8">
-                <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
-                <p className="text-muted-foreground animate-pulse">
-                  Fetching latest market data from server and performing analysis...
-                </p>
-              </div>
-            ) : displayData ? (
-              <>
-                <StockTable data={displayData} />
-                {!isAuthenticated && <Paywall />}
-              </>
-            ) : null}
+          <div className="flex gap-6">
+            <div className="w-[60%] min-w-0">
+              {isLoading ? (
+                <div className="space-y-4 text-center py-8">
+                  <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+                  <p className="text-muted-foreground animate-pulse">
+                    Fetching latest market data from server and performing analysis...
+                  </p>
+                </div>
+              ) : displayData ? (
+                <>
+                  <StockTable data={displayData} />
+                  {!isAuthenticated && <Paywall />}
+                </>
+              ) : null}
+            </div>
+
+            <div className="w-[40%] min-w-0">
+              <NewsPanel />
+            </div>
           </div>
         </div>
       </div>
@@ -166,3 +173,4 @@ const Index = () => {
 };
 
 export default Index;
+

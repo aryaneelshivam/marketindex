@@ -51,21 +51,24 @@ export const StockTable = ({ data }: StockTableProps) => {
   }, []);
 
   return (
-    <div className="rounded-lg border border-border/40 overflow-x-auto bg-background shadow-lg">
-      <Table>
-        <StockTableHeader />
-        <TableBody>
-          {data.map((stock, index) => (
-            <StockTableRow
-              key={stock.Symbol}
-              stock={stock}
-              index={index}
-              isSelected={selectedStock === stock.Symbol}
-              onSelect={() => setSelectedStock(stock.Symbol)}
-            />
-          ))}
-        </TableBody>
-      </Table>
+    <div className="rounded-lg border border-border/40 overflow-hidden bg-background shadow-lg w-full">
+      <div className="overflow-x-auto">
+        <Table>
+          <StockTableHeader />
+          <TableBody>
+            {data.map((stock, index) => (
+              <StockTableRow
+                key={stock.Symbol}
+                stock={stock}
+                index={index}
+                isSelected={selectedStock === stock.Symbol}
+                onSelect={() => setSelectedStock(stock.Symbol)}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
+
