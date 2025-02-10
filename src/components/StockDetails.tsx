@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "./ui/skeleton";
 import {
@@ -191,7 +192,7 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
         <PriceChart symbol={symbol} />
       </div>
       
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto scrollbar-none">
         <div className="p-3">
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="w-full mb-3 bg-muted/50 backdrop-blur-sm sticky top-0 z-10">
@@ -202,10 +203,10 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
             
             <TabsContent value="overview" className="space-y-4">
               {isLoading ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-[100px] w-full" />
-                  <Skeleton className="h-[100px] w-full" />
-                  <Skeleton className="h-[100px] w-full" />
+                <div className="space-y-4 animate-pulse">
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-24 w-full" />
                 </div>
               ) : profile ? (
                 <>
@@ -218,9 +219,10 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
             
             <TabsContent value="financials" className="space-y-4">
               {isLoading ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-[100px] w-full" />
-                  <Skeleton className="h-[100px] w-full" />
+                <div className="space-y-4 animate-pulse">
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-24 w-full" />
                 </div>
               ) : profile ? (
                 <>
@@ -233,9 +235,10 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
             
             <TabsContent value="peers" className="space-y-4">
               {isLoading ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-[100px] w-full" />
-                  <Skeleton className="h-[100px] w-full" />
+                <div className="space-y-4 animate-pulse">
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-24 w-full" />
                 </div>
               ) : profile ? (
                 <>
@@ -251,3 +254,4 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
     </div>
   );
 };
+
