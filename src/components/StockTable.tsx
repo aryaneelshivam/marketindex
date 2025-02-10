@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { StockTableHeader } from "./stock-table/TableHeader";
 import { StockTableRow } from "./stock-table/StockTableRow";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface RSIData {
   Value: number;
@@ -50,6 +51,38 @@ export const StockTable = ({ data, selectedStock, onSelectStock }: StockTablePro
 
     return () => subscription.unsubscribe();
   }, []);
+
+  if (!data) {
+    return (
+      <div className="rounded-lg border border-border/40 overflow-hidden bg-background shadow-lg w-full h-[calc(100vh-10rem)]">
+        <div className="overflow-y-auto h-full">
+          <div className="overflow-x-auto">
+            <Table>
+              <StockTableHeader />
+              <TableBody>
+                {[...Array(10)].map((_, index) => (
+                  <tr key={index} className="border-b border-border/40">
+                    <td className="p-4"><Skeleton className="h-4 w-8" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-20" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-8" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-16" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-24" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-32" /></td>
+                  </tr>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-lg border border-border/40 overflow-hidden bg-background shadow-lg w-full h-[calc(100vh-10rem)]">
