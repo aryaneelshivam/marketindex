@@ -185,6 +185,41 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
     return null;
   }
 
+  // Show skeleton loading state before content is ready
+  if (isLoading) {
+    return (
+      <div className="rounded-xl border bg-card h-[calc(100vh-10rem)] flex flex-col animate-pulse">
+        <div className="p-3 border-b flex-shrink-0">
+          <Skeleton className="h-6 w-24 mb-4" />
+          <Skeleton className="h-[200px] w-full" />
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-3 space-y-4">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+          
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+          
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-36" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl border bg-card h-[calc(100vh-10rem)] flex flex-col">
       <div className="p-3 border-b flex-shrink-0">
@@ -202,13 +237,7 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
             </TabsList>
             
             <TabsContent value="overview" className="space-y-4">
-              {isLoading ? (
-                <div className="space-y-4 animate-pulse">
-                  <Skeleton className="h-24 w-full" />
-                  <Skeleton className="h-24 w-full" />
-                  <Skeleton className="h-24 w-full" />
-                </div>
-              ) : profile ? (
+              {profile ? (
                 <>
                   <ProfileSection title="Financial Profile" data={profile.financial_profile} />
                   <ProfileSection title="Stock Performance" data={profile.stock_performance} />
@@ -218,13 +247,7 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
             </TabsContent>
             
             <TabsContent value="financials" className="space-y-4">
-              {isLoading ? (
-                <div className="space-y-4 animate-pulse">
-                  <Skeleton className="h-24 w-full" />
-                  <Skeleton className="h-24 w-full" />
-                  <Skeleton className="h-24 w-full" />
-                </div>
-              ) : profile ? (
+              {profile ? (
                 <>
                   <ProfileSection title="Earnings & Revenue" data={profile.earnings_and_revenue} />
                   <ProfileSection title="Cash & Debt" data={profile.cash_and_debt} />
@@ -234,13 +257,7 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
             </TabsContent>
             
             <TabsContent value="peers" className="space-y-4">
-              {isLoading ? (
-                <div className="space-y-4 animate-pulse">
-                  <Skeleton className="h-24 w-full" />
-                  <Skeleton className="h-24 w-full" />
-                  <Skeleton className="h-24 w-full" />
-                </div>
-              ) : profile ? (
+              {profile ? (
                 <>
                   <ProfileSection title="Ownership & Shares" data={profile.ownership_and_shares} />
                   <ProfileSection title="Liquidity & Ratios" data={profile.liquidity_and_ratios} />
@@ -254,4 +271,3 @@ export const StockDetails = ({ symbol, onClose }: StockDetailsProps) => {
     </div>
   );
 };
-
